@@ -3,10 +3,13 @@ import axios from "axios";
 
 function Data() {
   const [data, setData] = useState([]);
-
   useEffect(() => {
     axios
-      .get("/api/data")
+      .get("/api/data", {
+        headers: {
+          Authorization: localStorage.getItem("token"),
+        },
+      })
       .then((res) => {
         setData(res.data);
         console.log(data);
