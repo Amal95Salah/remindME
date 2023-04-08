@@ -8,6 +8,7 @@ import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
 import Signout from "./pages/Signout/Signout";
 import Footer from "./components/Footer/Footer";
 import Navbar from "./components/Navbar/Navbar";
+import Reminder from "./pages/Reminder/Reminder";
 
 function App() {
   return (
@@ -23,6 +24,9 @@ function App() {
             /> */}
           <Route path="data" element={<PrivateRoute />}>
             <Route path="/data" element={<Data />} />
+          </Route>
+          <Route path="reminder" element={<PrivateRoute />}>
+            <Route path="/reminder" element={<Reminder />} />
           </Route>
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
