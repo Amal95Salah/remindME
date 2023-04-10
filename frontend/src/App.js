@@ -5,10 +5,12 @@ import Signup from "./pages/Signup/Signup";
 import Home from "./pages/Home/Home";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
-import Signout from "./pages/Signout/Signout";
 import Footer from "./components/Footer/Footer";
 import Navbar from "./components/Navbar/Navbar";
 import Reminder from "./pages/Reminder/Reminder";
+import MedicineForm from "./pages/Medicine/MedicineForm";
+import ViewMadicine from "./pages/Medicine/ViewMadicine";
+import Profile from "./pages/Profile/Profile";
 
 function App() {
   return (
@@ -28,9 +30,15 @@ function App() {
           <Route path="reminder" element={<PrivateRoute />}>
             <Route path="/reminder" element={<Reminder />} />
           </Route>
+          <Route path="medicine/add" element={<PrivateRoute />}>
+            <Route path="/medicine/add" element={<MedicineForm />} />
+          </Route>
+          <Route path="profile" element={<PrivateRoute />}>
+            <Route path="/profile" element={<Profile />} />
+          </Route>
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
-          <Route path="/signout" element={<Signout />} />
+          <Route path="/medicine/list" element={<ViewMadicine />} />
         </Routes>
         <Footer />
       </div>

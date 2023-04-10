@@ -12,12 +12,17 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { Alert } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import jwt_decode from "jwt-decode";
 
 const theme = createTheme();
 
 function Login() {
   // const [username, setUsername] = useState("");
   // const [password, setPassword] = useState("");
+  const [loginSuccess, setLoginSuccess] = useState();
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -35,12 +40,23 @@ function Login() {
     })
       .then((response) => {
         // Parse the response to JSON
+        if (!response.ok) {
+          setLoginSuccess(false);
+          throw new Error("Invalid credentials");
+        }
+        setLoginSuccess(true);
+        setTimeout(() => {
+          navigate("/");
+        }, 2000);
         return response.json();
       })
       .then((data) => {
         // Save the token in localStorage
-        console.log(data.token);
+
+        const decoded = jwt_decode(data.token);
+        const email = decoded.email;
         localStorage.setItem("token", data.token);
+        localStorage.setItem("email", email);
       })
       .catch((error) => console.error(error));
   };
@@ -56,6 +72,20 @@ function Login() {
             alignItems: "center",
           }}
         >
+          {loginSuccess && (
+            <Alert severity="success">
+              <span>
+                <span>Alert!</span> you successfully logged in
+              </span>
+            </Alert>
+          )}
+          {loginSuccess == false && (
+            <Alert severity="error">
+              <span>
+                <span>Alert!</span> Invalid credentials
+              </span>
+            </Alert>
+          )}
           <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
             <LockOutlinedIcon />
           </Avatar>
@@ -107,7 +137,7 @@ function Login() {
                 </Link>
               </Grid>
               <Grid item>
-                <Link href="#" variant="body2">
+                <Link href="/signup" variant="body2">
                   {"Don't have an account? Sign Up"}
                 </Link>
               </Grid>

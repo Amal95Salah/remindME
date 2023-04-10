@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -14,48 +14,81 @@ import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
-import { Card, Paper } from "@mui/material";
+import { Card, FormControl, InputLabel, Paper } from "@mui/material";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { MobileTimePicker } from "@mui/x-date-pickers/MobileTimePicker";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
 const theme = createTheme();
 
 function Reminder() {
-  const [medicine, setMedicine] = React.useState("");
+  const [medicine, setMedicine] = useState("");
+  const [repetition, setRepetition] = useState("");
+  const [startDate, setStartDate] = useState();
+  const [endDate, setEndDate] = useState();
+  const [time, setTime] = useState();
 
-  const handleChange = (event) => {
-    setMedicine(event.target.value);
-  };
+  const [medicines, setMedicines] = useState([]);
+
+  React.useEffect(() => {
+    fetch("/api/medicine", {
+      headers: {
+        Authorization: localStorage.getItem("token"),
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setMedicines(data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+
   const handleSubmit = (e) => {
-    // e.preventDefault();
-    // const dataForm = new FormData(e.currentTarget);
-    // const email = dataForm.get("email");
-    // const password = dataForm.get("password");
-    // const data = { email, password };
-    // // const data = { email, password };
-    // fetch("/api/Reminder", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify(data),
-    // })
-    //   .then((response) => {
-    //     // Parse the response to JSON
-    //     return response.json();
-    //   })
-    //   .then((data) => {
-    //     // Save the token in localStorage
-    //     console.log(data.token);
-    //     localStorage.setItem("token", data.token);
-    //   })
-    //   .catch((error) => console.error(error));
+    e.preventDefault();
+
+    const dataForm = new FormData(e.currentTarget);
+
+    const dosage = dataForm.get("dosage");
+    const frequency = dataForm.get("frequency");
+    const note = dataForm.get("note");
+
+    const data = {
+      medicine,
+      dosage,
+      repetition,
+      frequency,
+      startDate: startDate?.toISOString().slice(0, 10), // 2021-10-10T00:00:00.000Z
+      endDate: endDate?.toISOString().slice(0, 10),
+      time: time?.toISOString().slice(11, 16),
+      note,
+    };
+
+    console.log(data);
+
+    fetch("/api/reminder/add", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: localStorage.getItem("token"),
+      },
+      body: JSON.stringify(data),
+    })
+      .then((response) => {
+        // Parse the response to JSON
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((error) => console.error(error));
   };
 
   return (
     <ThemeProvider theme={theme}>
-      <Container component="main" maxWidth="xs">
+      <Container component="main" maxWidth="sm">
         <CssBaseline />
         <Box
           sx={{
@@ -71,42 +104,104 @@ function Reminder() {
           <Box
             component="form"
             onSubmit={handleSubmit}
-            noValidate
-            sx={{ mt: 1 }}
+            sx={{ mt: 1, width: "100%" }}
           >
-            <Paper sx={{ p: 8 }}>
-              <Select
-                labelId="demo-simple-select-filled-label"
-                id="demo-simple-select-filled"
-                value={medicine}
-                onChange={handleChange}
-              >
-                <MenuItem value="">
-                  <em>None</em>
-                </MenuItem>
-                <MenuItem value={10}>Amal</MenuItem>
-                <MenuItem value={20}>Medicine</MenuItem>
-                <MenuItem value={30}>Another medicine</MenuItem>
-              </Select>
-              <LocalizationProvider
-                dateAdapter={AdapterDayjs}
-                style={{ margin: 10 }}
-              >
-                <MobileTimePicker
-                  label={'"hours", "minutes"'}
-                  views={["hours", "minutes"]}
+            <Paper
+              sx={{ p: 8, display: "flex", flexDirection: "column", gap: 2 }}
+              elevation={6}
+            >
+              <FormControl fullWidth>
+                <InputLabel id="medicine">Medicine</InputLabel>
+                <Select
+                  labelId="medicine"
+                  id="medicine"
+                  label="Medicine"
+                  defaultValue={""}
+                  onChange={(e) => setMedicine(e.target.value)}
+                >
+                  {medicines.map((row) => (
+                    <MenuItem value={row.name}>{row.name}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="dosage"
+                label="Dosage"
+                name="dosage"
+                autoComplete="dosage"
+                sx={{ m: 0 }}
+              />
+              <FormControl fullWidth sx={{ m: 0 }}>
+                <InputLabel id="DWM-select-label">Repetition </InputLabel>
+                <Select
+                  labelId="DWM-select-label"
+                  id="DWM-select"
+                  label="Repetition"
+                  value={repetition}
+                  onChange={(e) => setRepetition(e.target.value)}
+                >
+                  <MenuItem value={"D"}>Daily</MenuItem>
+                  <MenuItem value={"W"}>Weekly</MenuItem>
+                  <MenuItem value={"M"}>Monthly</MenuItem>
+                </Select>
+              </FormControl>
+              <TextField
+                type="number"
+                margin="normal"
+                required
+                fullWidth
+                id="frequency"
+                label="Frequency"
+                name="frequency"
+                autoComplete="frequency"
+                InputProps={{
+                  inputProps: { min: 0 },
+                }}
+                sx={{ m: 0 }}
+              />
+              <LocalizationProvider dateAdapter={AdapterDayjs} required>
+                <DatePicker
+                  label="Start Date"
+                  id="startDate"
+                  name="startDate"
+                  onChange={(newValue) => {
+                    setStartDate(newValue);
+                  }}
                 />
               </LocalizationProvider>
-              <FormControlLabel
-                control={<Checkbox value="done" color="primary" />}
-                label="if the user wants to stop the notification"
-              />
-              <Button
-                type="submit"
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  label="End Date"
+                  id="endDate"
+                  name="endDate"
+                  onChange={(newValue) => {
+                    setEndDate(newValue);
+                  }}
+                />
+              </LocalizationProvider>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <MobileTimePicker
+                  label="Time"
+                  views={["hours", "minutes"]}
+                  onChange={(newValue) => {
+                    setTime(newValue);
+                  }}
+                />
+              </LocalizationProvider>
+              <TextField
+                margin="normal"
                 fullWidth
-                variant="contained"
-                sx={{ mt: 3, mb: 2 }}
-              >
+                id="note"
+                label="Note"
+                name="note"
+                autoComplete="note"
+                multiline
+                sx={{ m: 0 }}
+              />
+              <Button type="submit" fullWidth variant="contained">
                 Add reminder
               </Button>
             </Paper>

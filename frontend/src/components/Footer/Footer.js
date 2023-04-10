@@ -10,10 +10,8 @@ export default function Footer() {
       component="footer"
       variant="outlined"
       sx={{
-        bottom: 0,
         width: "100%",
-        position: "fixed",
-        marginTop: "calc(10% + 60px)",
+        marginTop: "10%",
       }}
     >
       <Container maxWidth="lg">

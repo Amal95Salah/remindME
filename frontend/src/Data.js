@@ -3,6 +3,7 @@ import axios from "axios";
 
 function Data() {
   const [data, setData] = useState([]);
+  console.log(localStorage.getItem("token"));
   useEffect(() => {
     axios
       .get("/api/data", {
