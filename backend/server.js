@@ -54,9 +54,9 @@ app.post("/api/login", (req, res) => {
       const hashedPassword = results[0].password;
       const passwordMatch = bcrypt.compareSync(password, hashedPassword);
       if (passwordMatch) {
-        console.log("uth");
+        const id = results[0].id;
 
-        const token = jwt.sign({ email }, "secret");
+        const token = jwt.sign({ id }, "secret");
         res.json({ token: token });
       } else {
         console.log("notuth");
@@ -67,12 +67,12 @@ app.post("/api/login", (req, res) => {
   });
 });
 
-app.get("/api/user/:email", verifyToken, (req, res) => {
-  const { email } = req.params;
-  db.query("SELECT * FROM users WHERE email = ?", [email], (error, result) => {
+app.get("/api/user/:id", verifyToken, (req, res) => {
+  const { id } = req.params;
+  db.query("SELECT * FROM users WHERE id = ?", [id], (error, result) => {
     if (error) throw error;
     if (result.length === 0) {
-      console.log("no user", email);
+      console.log("no user", id);
       return res.status(404).json({ message: "User not found" });
     } else {
       const user = result[0];
@@ -161,6 +161,7 @@ app.post("/api/reminder/add", verifyToken, (req, res) => {
   console.log(req.body);
 
   const {
+    user_id,
     medicine,
     dosage,
     repetition,
@@ -170,10 +171,19 @@ app.post("/api/reminder/add", verifyToken, (req, res) => {
     time,
     note,
   } = req.body;
-  console.log("alando", repetition);
   db.query(
-    "INSERT INTO reminder (medicine, dosage, repetition, frequency, startDate, endDate, time, note) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-    [medicine, dosage, repetition, frequency, startDate, endDate, time, note],
+    "INSERT INTO reminder (user_id, medicine, dosage, repetition, frequency, startDate, endDate, time, note) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+    [
+      user_id,
+      medicine,
+      dosage,
+      repetition,
+      frequency,
+      startDate,
+      endDate,
+      time,
+      note,
+    ],
     (error, results) => {
       if (error) throw error;
       res.json({ message: "reminder is added" });
@@ -181,16 +191,16 @@ app.post("/api/reminder/add", verifyToken, (req, res) => {
   );
 });
 
-app.put("/api/users/:email", verifyToken, (req, res) => {
-  const { email } = req.params;
+app.put("/api/users/:id", verifyToken, (req, res) => {
+  const { id } = req.params;
 
   const { firstName, lastName, password, newEmail } = req.body;
 
   const hashedPassword = bcrypt.hashSync(password, 10);
 
   db.query(
-    "UPDATE users SET firstName = ?, lastName = ?, password = ?, email = ? WHERE email = ?",
-    [firstName, lastName, hashedPassword, newEmail, email],
+    "UPDATE users SET firstName = ?, lastName = ?, password = ?, email = ? WHERE id = ?",
+    [firstName, lastName, hashedPassword, newEmail, id],
     (error, results) => {
       if (error) {
         console.error(error);

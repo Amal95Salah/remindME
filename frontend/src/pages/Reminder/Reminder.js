@@ -30,6 +30,7 @@ function Reminder() {
   const [time, setTime] = useState();
 
   const [medicines, setMedicines] = useState([]);
+  const user_id = localStorage.getItem("id");
 
   React.useEffect(() => {
     fetch("/api/medicine", {
@@ -56,6 +57,7 @@ function Reminder() {
     const note = dataForm.get("note");
 
     const data = {
+      user_id,
       medicine,
       dosage,
       repetition,

@@ -54,9 +54,10 @@ function Login() {
         // Save the token in localStorage
 
         const decoded = jwt_decode(data.token);
-        const email = decoded.email;
+        const id = decoded.id;
         localStorage.setItem("token", data.token);
-        localStorage.setItem("email", email);
+        localStorage.setItem("id", id);
+        console.log("id is", id);
       })
       .catch((error) => console.error(error));
   };

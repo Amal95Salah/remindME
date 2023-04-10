@@ -26,10 +26,10 @@ function Profile() {
   const [user, setUser] = React.useState("");
 
   const token = localStorage.getItem("token");
-  const email = localStorage.getItem("email");
+  const id = localStorage.getItem("id");
 
   React.useEffect(() => {
-    fetch(`/api/user/${email}`, {
+    fetch(`/api/user/${id}`, {
       headers: {
         // Authorization: `Bearer ${localStorage.getItem("token")}`,
         Authorization: token,
@@ -40,7 +40,7 @@ function Profile() {
         setUser(data);
       })
       .catch((error) => console.error(error));
-  }, [email]);
+  }, [id]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -53,7 +53,7 @@ function Profile() {
     const password = dataForm.get("password");
     const data = { firstName, lastName, password, newEmail };
     console.log(data);
-    fetch(`/api/users/${email}`, {
+    fetch(`/api/users/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
