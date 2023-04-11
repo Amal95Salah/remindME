@@ -43,11 +43,12 @@ function Login() {
         if (!response.ok) {
           setLoginSuccess(false);
           throw new Error("Invalid credentials");
+        } else {
+          setLoginSuccess(true);
+          setTimeout(() => {
+            navigate("/");
+          }, 2000);
         }
-        setLoginSuccess(true);
-        setTimeout(() => {
-          navigate("/");
-        }, 2000);
         return response.json();
       })
       .then((data) => {
@@ -57,7 +58,6 @@ function Login() {
         const id = decoded.id;
         localStorage.setItem("token", data.token);
         localStorage.setItem("id", id);
-        console.log("id is", id);
       })
       .catch((error) => console.error(error));
   };

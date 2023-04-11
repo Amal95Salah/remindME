@@ -35,7 +35,7 @@ app.post("/api/signup", (req, res) => {
   const { email, password, firstName, lastName } = req.body;
   const hashedPassword = bcrypt.hashSync(password, 10);
   db.query(
-    "INSERT INTO users (email, password, firstName, lastName) VALUES (?, ?, ?, ?)",
+    "INSERT INTO users (email, password, firstName, lastName) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE email = email",
     [email, hashedPassword, firstName, lastName],
     (error, results) => {
       if (error) throw error;
@@ -94,14 +94,10 @@ app.get("/api/data", verifyToken, (req, res) => {
 });
 app.get("/api/medicine/:user_id", verifyToken, (req, res) => {
   const { user_id } = req.params;
-  //   // db.query("SELECT * FROM users WHERE id = ?", [id], (error, result) => {
-  //  SELECT groups.name
-  // FROM user_groups
-  // JOIN groups ON user_groups.group_id = groups.id
-  // WHERE user_groups.user_id = 1;
+  const pageSize = 6; // Set the number of items per page
   const sql =
-    "SELECT * FROM user_medicine JOIN medicine ON user_medicine.medicine_id = medicine.id WHERE user_medicine.user_id = ?";
-  db.query(sql, [user_id], (err, result) => {
+    "SELECT * FROM user_medicine JOIN medicine ON user_medicine.medicine_id = medicine.id WHERE user_medicine.user_id = ? LIMIT ?";
+  db.query(sql, [user_id, pageSize], (err, result) => {
     if (err) {
       throw err;
     }
@@ -156,7 +152,7 @@ app.post("/api/medicine/:user_id", verifyToken, (req, res) => {
   const { name } = req.body;
   const { user_id } = req.params;
   db.query(
-    "INSERT INTO medicine (name ) VALUES (?)",
+    "INSERT INTO medicine (name ) VALUES (?) ON DUPLICATE KEY UPDATE name = name",
     [name],
     (error, results) => {
       if (error) throw error;

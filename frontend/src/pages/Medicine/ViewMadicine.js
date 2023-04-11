@@ -6,6 +6,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
+import { Button } from "@mui/material";
 
 export default function ViewMadicine() {
   const [data, setData] = React.useState([]);
@@ -43,6 +44,7 @@ export default function ViewMadicine() {
               <TableCell component="th" scope="row">
                 {row.name}
               </TableCell>
+              <Button /*startIcon={<DeleteIcon />}*/>Delete</Button>{" "}
             </TableRow>
           ))}
         </TableBody>

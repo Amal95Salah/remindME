@@ -51,7 +51,6 @@ function MedicineForm() {
       .then((response) => {
         if (!response.ok) {
           setAddMedicine(false);
-
           throw new Error("Can not add this medicine");
         }
         setAddMedicine(true);

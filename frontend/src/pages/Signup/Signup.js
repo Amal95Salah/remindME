@@ -12,11 +12,13 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { Alert } from "@mui/material";
 const theme = createTheme();
 
 function Signup() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [userError, setUserError] = useState();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -35,7 +37,14 @@ function Signup() {
       },
       body: JSON.stringify(data),
     })
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          setUserError(false);
+
+          // throw new Error("Can not add this user");
+        }
+        return response.json();
+      })
       .then((data) => console.log(data))
       .catch((error) => console.error(error));
   };
@@ -64,6 +73,13 @@ function Signup() {
             onSubmit={handleSubmit}
             sx={{ mt: 3 }}
           >
+            {userError == false && (
+              <Alert severity="error">
+                <span>
+                  <span>Alert!</span> Cant add this user
+                </span>
+              </Alert>
+            )}
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
                 <TextField
