@@ -33,7 +33,7 @@ function Reminder() {
   const user_id = localStorage.getItem("id");
 
   React.useEffect(() => {
-    fetch("/api/medicine", {
+    fetch(`/api/medicine/${user_id}`, {
       headers: {
         Authorization: localStorage.getItem("token"),
       },

@@ -7,23 +7,12 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 
-function createData(name) {
-  return { name };
-}
-
-const rows = [
-  createData("Frozen yoghurt"),
-  createData("Ice cream sandwich"),
-  createData("Eclair"),
-  createData("Cupcake"),
-  createData("Gingerbread"),
-];
-
 export default function ViewMadicine() {
   const [data, setData] = React.useState([]);
+  const user_id = localStorage.getItem("id");
 
   React.useEffect(() => {
-    fetch("/api/medicine", {
+    fetch(`/api/medicine/${user_id}`, {
       headers: {
         Authorization: localStorage.getItem("token"),
       },

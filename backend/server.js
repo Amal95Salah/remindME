@@ -92,9 +92,16 @@ app.get("/api/data", verifyToken, (req, res) => {
     res.send(result);
   });
 });
-app.get("/api/medicine", verifyToken, (req, res) => {
-  const sql = "SELECT * FROM medicine";
-  db.query(sql, (err, result) => {
+app.get("/api/medicine/:user_id", verifyToken, (req, res) => {
+  const { user_id } = req.params;
+  //   // db.query("SELECT * FROM users WHERE id = ?", [id], (error, result) => {
+  //  SELECT groups.name
+  // FROM user_groups
+  // JOIN groups ON user_groups.group_id = groups.id
+  // WHERE user_groups.user_id = 1;
+  const sql =
+    "SELECT * FROM user_medicine JOIN medicine ON user_medicine.medicine_id = medicine.id WHERE user_medicine.user_id = ?";
+  db.query(sql, [user_id], (err, result) => {
     if (err) {
       throw err;
     }
@@ -144,18 +151,30 @@ function verifyToken(req, res, next) {
   }
 }
 
-app.post("/api/medicine", verifyToken, (req, res) => {
+app.post("/api/medicine/:user_id", verifyToken, (req, res) => {
   console.log(req.body);
   const { name } = req.body;
+  const { user_id } = req.params;
   db.query(
     "INSERT INTO medicine (name ) VALUES (?)",
     [name],
     (error, results) => {
       if (error) throw error;
-      res.json({ message: "medicine is added" });
+      res.json({ message: "medicine is added to medicine" });
+      const medicine_id = results.insertId;
+      insertMedicineUser(user_id, medicine_id);
     }
   );
 });
+function insertMedicineUser(user_id, medicine_id) {
+  db.query(
+    "INSERT INTO user_medicine (user_id, medicine_id) VALUES (?, ?)",
+    [user_id, medicine_id],
+    (error, resultss) => {
+      if (error) throw error;
+    }
+  );
+}
 
 app.post("/api/reminder/add", verifyToken, (req, res) => {
   console.log(req.body);

@@ -28,6 +28,8 @@ import { useNavigate } from "react-router-dom";
 const theme = createTheme();
 
 function MedicineForm() {
+  const user_id = localStorage.getItem("id");
+
   const [addMedicine, setAddMedicine] = useState();
   const navigate = useNavigate();
 
@@ -38,7 +40,7 @@ function MedicineForm() {
     const name = dataForm.get("name");
     const data = { name };
     console.log(data);
-    fetch("/api/medicine", {
+    fetch(`/api/medicine/${user_id}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
