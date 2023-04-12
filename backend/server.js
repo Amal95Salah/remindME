@@ -228,3 +228,19 @@ app.put("/api/users/:id", verifyToken, (req, res) => {
     }
   );
 });
+
+app.get("/api/notification/count/:userId", (req, res) => {
+  const { userId } = req.params;
+
+  // Execute a MySQL query to count the number of unread notifications for the user
+  db.query(
+    "SELECT COUNT(*) as count FROM notification WHERE user_id = ? AND isRead = FALSE",
+    [userId],
+    (error, results) => {
+      if (error) throw error;
+      const count = results[0].count;
+      res.json({ count });
+    }
+  );
+});
+// /api/notification

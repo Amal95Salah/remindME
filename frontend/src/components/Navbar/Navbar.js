@@ -16,6 +16,7 @@ import MailIcon from "@mui/icons-material/Mail";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
 import { redirect, useNavigate } from "react-router-dom";
+import Notification from "../Notification/Notification";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -57,8 +58,10 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-export default function PrimarySearchAppBar() {
+export default function Navbar() {
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [numberNotification, setNumberNotification] = React.useState(0);
+
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
   const navigate = useNavigate();
 
@@ -67,6 +70,10 @@ export default function PrimarySearchAppBar() {
 
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
+  };
+  const handleNotification = (event) => {
+    // setAnchorEl(event.currentTarget);
+    console.log("clicked");
   };
 
   const handleMobileMenuClose = () => {
@@ -131,14 +138,14 @@ export default function PrimarySearchAppBar() {
       open={isMobileMenuOpen}
       onClose={handleMobileMenuClose}
     >
-      <MenuItem>
+      {/* <MenuItem>
         <IconButton size="large" aria-label="show 4 new mails" color="inherit">
           <Badge badgeContent={4} color="error">
             <MailIcon />
           </Badge>
         </IconButton>
         <p>Messages</p>
-      </MenuItem>
+      </MenuItem> */}
       <MenuItem>
         <IconButton
           size="large"
@@ -193,8 +200,18 @@ export default function PrimarySearchAppBar() {
               size="large"
               aria-label="show 4 new mails"
               color="inherit"
+              onClick={handleNotification}
             >
-              <Badge badgeContent={3} color="error">
+              <Badge
+                badgeContent={
+                  <Notification
+                    numberNotification={
+                      (numberNotification, setNumberNotification)
+                    }
+                  />
+                }
+                color="error"
+              >
                 <NotificationsIcon />
               </Badge>
             </IconButton>
