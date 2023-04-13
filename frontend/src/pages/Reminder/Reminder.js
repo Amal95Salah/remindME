@@ -24,6 +24,11 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 const theme = createTheme();
 
 function Reminder() {
+  const repetitionValue = {
+    D: 12,
+    W: 12 * 7,
+    M: 12 * 30,
+  };
   const [medicine, setMedicine] = useState("");
   const [repetition, setRepetition] = useState("");
   const [startDate, setStartDate] = useState();
@@ -48,33 +53,34 @@ function Reminder() {
       });
   }, []);
 
-  const addNotification = (reminderData, frequency) => {
+  const addNotification = (reminderData, frequency, repetition) => {
     console.log("inadd notificaion");
-    // fetch("/api/notification/add", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //     Authorization: localStorage.getItem("token"),
-    //   },
-    //   body: JSON.stringify(reminderData),
-    // })
-    //   .then((response) => {
-    //     // Parse the response to JSON
-    //     return response.json();
-    //   })
-    //   .then((data) => {
-    //     console.log(data);
-    //   })
-    //   .catch((error) => console.error(error));
+    fetch("/api/notification/add", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: localStorage.getItem("token"),
+      },
+      body: JSON.stringify(reminderData),
+    })
+      .then((response) => {
+        // Parse the response to JSON
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((error) => console.error(error));
 
     //if statement when stop TODO
-    const timeForReminder = (24 / frequency) * 60 * 60 * 1000; // in milisecond
+    const timeForReminder =
+      (repetitionValue[repetition] / frequency) * 60 * 60 * 1000; // in milisecond
     console.log(timeForReminder);
-    // const timeout = setTimeout(() => {
-    //   console.log("intimeout");
-    //   addNotification(reminderData, frequency);
-    // }, timeForReminder);
-    // return () => clearTimeout(timeout);
+    const timeout = setTimeout(() => {
+      console.log("intimeout");
+      addNotification(reminderData, frequency, repetition);
+    }, timeForReminder);
+    return () => clearTimeout(timeout);
   };
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -139,7 +145,7 @@ function Reminder() {
 
     const timeForReminder = diffInMs;
     const timeout = setTimeout(() => {
-      addNotification(reminderData, frequency);
+      addNotification(reminderData, frequency, repetition);
     }, timeForReminder);
     return () => clearTimeout(timeout);
   };
