@@ -270,4 +270,17 @@ app.put("/api/notification/read/:notificationId/", (req, res) => {
     }
   );
 });
+
+app.post("/api/notification/add", verifyToken, (req, res) => {
+  const { message, isRead, user_id } = req.body;
+  db.query(
+    "INSERT INTO notification (message,isRead,user_id ) VALUES (?,?,?)",
+    [message, isRead, user_id],
+    (error, results) => {
+      if (error) throw error;
+      res.json({ message: "notification is added" });
+    }
+  );
+});
+
 // /api/notification

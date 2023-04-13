@@ -86,6 +86,49 @@ function Reminder() {
         console.log(data);
       })
       .catch((error) => console.error(error));
+    const message = medicine;
+    const isRead = false;
+    const reminderData = {
+      user_id,
+      message,
+      isRead,
+    };
+    fetch("/api/notification/add", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: localStorage.getItem("token"),
+      },
+      body: JSON.stringify(reminderData),
+    })
+      .then((response) => {
+        // Parse the response to JSON
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((error) => console.error(error));
+
+    // const [numberNotificationUnRead, setNumberNotification] = useState(0);
+    //  useEffect(() => {
+    //    // Calculate the time until the scheduled notification
+    //    const scheduledTime = new Date("2023-04-15T12:00:00Z").getTime(); // Replace with your scheduled time
+    //    const currentTime = new Date().getTime();
+    //    const timeForReminder = scheduledTime - currentTime;
+
+    //    // Wait until the scheduled time to send the request
+    //    const timeout = setTimeout(() => {
+    //      // Call backend API to get scheduled notification
+    //      axios.get("/api/notification").then((response) => {
+    //        setNotification("true");
+    //      });
+    //    }, timeForReminder);
+
+    //    //check if reminder still working calculate next reminder
+    //    // Clean up the timeout on unmount
+    //    return () => clearTimeout(timeout);
+    //  }, []);
   };
 
   return (
