@@ -243,4 +243,31 @@ app.get("/api/notification/count/:userId", (req, res) => {
     }
   );
 });
+
+app.get("/api/notification/:userId", (req, res) => {
+  const { userId } = req.params;
+
+  // Execute a MySQL query to count the number of unread notifications for the user
+  db.query(
+    "SELECT * FROM notification WHERE user_id = ? AND isRead = FALSE",
+    [userId],
+    (error, results) => {
+      if (error) throw error;
+      res.json(results);
+    }
+  );
+});
+app.put("/api/notification/read/:notificationId/", (req, res) => {
+  const { notificationId } = req.params;
+
+  // Execute a MySQL query to update the notification's isRead flag
+  db.query(
+    "UPDATE notification SET isRead = TRUE WHERE id = ?",
+    [notificationId],
+    (error, results) => {
+      if (error) throw error;
+      res.json({ message: "Notification updated" });
+    }
+  );
+});
 // /api/notification

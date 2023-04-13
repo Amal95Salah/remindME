@@ -11,7 +11,7 @@ import Reminder from "./pages/Reminder/Reminder";
 import MedicineForm from "./pages/Medicine/MedicineForm";
 import ViewMadicine from "./pages/Medicine/ViewMadicine";
 import Profile from "./pages/Profile/Profile";
-import Notification from "./components/Notification/Notification";
+import ListNotification from "./components/Notification/ListNotification";
 
 function App() {
   return (
@@ -40,7 +40,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/medicine/list" element={<ViewMadicine />} />
-          <Route path="/notification" element={<Notification />} />
+          <Route path="/notification" element={<ListNotification />} />
         </Routes>
         <Footer />
       </div>

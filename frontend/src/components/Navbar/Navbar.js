@@ -17,7 +17,10 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
 import { redirect, useNavigate } from "react-router-dom";
 import Notification from "../Notification/Notification";
-
+import ListNotification from "../Notification/ListNotification";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemText from "@mui/material/ListItemText";
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
   borderRadius: theme.shape.borderRadius,
@@ -60,19 +63,22 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 export default function Navbar() {
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorElNotification, setAnchorElNotification] = React.useState(null);
   const [numberNotification, setNumberNotification] = React.useState(0);
 
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
   const navigate = useNavigate();
 
   const isMenuOpen = Boolean(anchorEl);
+  const isNotificationOpen = Boolean(anchorElNotification);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
   const handleProfileMenuOpen = (event) => {
+    console.log(event.currentTarget);
     setAnchorEl(event.currentTarget);
   };
   const handleNotification = (event) => {
-    // setAnchorEl(event.currentTarget);
+    setAnchorElNotification(event.currentTarget);
     console.log("clicked");
   };
 
@@ -83,6 +89,9 @@ export default function Navbar() {
   const handleMenuClose = () => {
     setAnchorEl(null);
     handleMobileMenuClose();
+  };
+  const handleNotificationClose = () => {
+    setAnchorElNotification(null);
   };
 
   const handleSignout = () => {
@@ -100,6 +109,7 @@ export default function Navbar() {
   };
 
   const menuId = "primary-search-account-menu";
+  const notificationId = "primary-search-account-notification";
   const renderMenu = (
     <Menu
       anchorEl={anchorEl}
@@ -118,6 +128,34 @@ export default function Navbar() {
     >
       <MenuItem onClick={handleProfile}>Profile</MenuItem>
       <MenuItem onClick={handleSignout}>Signout</MenuItem>
+    </Menu>
+  );
+  const handleItemClick = (item) => {
+    console.log(`You clicked on ${item}`);
+  };
+
+  const renderNotification = (
+    <Menu
+      anchorEl={anchorElNotification}
+      // anchorOrigin={{
+      //   vertical: "top",
+      //   horizontal: "left",
+      // }}
+      id={notificationId} //delete
+      keepMounted
+      // transformOrigin={{
+      //   vertical: "top",
+      //   horizontal: "right",
+      // }}
+      open={isNotificationOpen}
+      onClose={handleNotificationClose}
+    >
+      <MenuItem>
+        <ListNotification
+          numberNotification={numberNotification}
+          setNumberNotification={setNumberNotification}
+        />
+      </MenuItem>
     </Menu>
   );
 
@@ -200,14 +238,15 @@ export default function Navbar() {
               size="large"
               aria-label="show 4 new mails"
               color="inherit"
+              // edge="end"
               onClick={handleNotification}
+              // aria-controls={notificationId}
             >
               <Badge
                 badgeContent={
                   <Notification
-                    numberNotification={
-                      (numberNotification, setNumberNotification)
-                    }
+                    numberNotification={numberNotification}
+                    setNumberNotification={setNumberNotification}
                   />
                 }
                 color="error"
@@ -243,6 +282,7 @@ export default function Navbar() {
       </AppBar>
       {renderMobileMenu}
       {renderMenu}
+      {numberNotification != 0 ? renderNotification : null}
     </Box>
   );
 }
