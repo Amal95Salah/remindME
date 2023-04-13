@@ -19,6 +19,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { MobileTimePicker } from "@mui/x-date-pickers/MobileTimePicker";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+// import { format } from "date-fns";
 
 const theme = createTheme();
 
@@ -47,15 +48,40 @@ function Reminder() {
       });
   }, []);
 
+  const addNotification = (reminderData, frequency) => {
+    console.log("inadd notificaion");
+    // fetch("/api/notification/add", {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //     Authorization: localStorage.getItem("token"),
+    //   },
+    //   body: JSON.stringify(reminderData),
+    // })
+    //   .then((response) => {
+    //     // Parse the response to JSON
+    //     return response.json();
+    //   })
+    //   .then((data) => {
+    //     console.log(data);
+    //   })
+    //   .catch((error) => console.error(error));
+
+    //if statement when stop TODO
+    const timeForReminder = (24 / frequency) * 60 * 60 * 1000; // in milisecond
+    console.log(timeForReminder);
+    // const timeout = setTimeout(() => {
+    //   console.log("intimeout");
+    //   addNotification(reminderData, frequency);
+    // }, timeForReminder);
+    // return () => clearTimeout(timeout);
+  };
   const handleSubmit = (e) => {
     e.preventDefault();
-
     const dataForm = new FormData(e.currentTarget);
-
     const dosage = dataForm.get("dosage");
     const frequency = dataForm.get("frequency");
     const note = dataForm.get("note");
-
     const data = {
       user_id,
       medicine,
@@ -93,42 +119,29 @@ function Reminder() {
       message,
       isRead,
     };
-    fetch("/api/notification/add", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: localStorage.getItem("token"),
-      },
-      body: JSON.stringify(reminderData),
-    })
-      .then((response) => {
-        // Parse the response to JSON
-        return response.json();
-      })
-      .then((data) => {
-        console.log(data);
-      })
-      .catch((error) => console.error(error));
 
-    // const [numberNotificationUnRead, setNumberNotification] = useState(0);
-    //  useEffect(() => {
-    //    // Calculate the time until the scheduled notification
-    //    const scheduledTime = new Date("2023-04-15T12:00:00Z").getTime(); // Replace with your scheduled time
-    //    const currentTime = new Date().getTime();
-    //    const timeForReminder = scheduledTime - currentTime;
+    // Calculate the time until the scheduled notification
+    const startTime = startDate ? new Date(startDate) : null;
+    const timeValue = time ? time.toDate() : null;
+    const currentTime = new Date().getTime();
+    let diffInMs = 0;
+    if (startTime && timeValue) {
+      const startTimeWithTime = new Date(
+        startTime.getFullYear(),
+        startTime.getMonth(),
+        startTime.getDate(),
+        timeValue.getHours(),
+        timeValue.getMinutes()
+      );
+      diffInMs = startTimeWithTime.getTime() - currentTime;
+    }
+    console.log(diffInMs);
 
-    //    // Wait until the scheduled time to send the request
-    //    const timeout = setTimeout(() => {
-    //      // Call backend API to get scheduled notification
-    //      axios.get("/api/notification").then((response) => {
-    //        setNotification("true");
-    //      });
-    //    }, timeForReminder);
-
-    //    //check if reminder still working calculate next reminder
-    //    // Clean up the timeout on unmount
-    //    return () => clearTimeout(timeout);
-    //  }, []);
+    const timeForReminder = diffInMs;
+    const timeout = setTimeout(() => {
+      addNotification(reminderData, frequency);
+    }, timeForReminder);
+    return () => clearTimeout(timeout);
   };
 
   return (
