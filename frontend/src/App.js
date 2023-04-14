@@ -12,38 +12,41 @@ import MedicineForm from "./pages/Medicine/MedicineForm";
 import ViewMadicine from "./pages/Medicine/ViewMadicine";
 import Profile from "./pages/Profile/Profile";
 import ListNotification from "./components/Notification/ListNotification";
+import { TimerProvider } from "./context/TimerContext";
 
 function App() {
   return (
     <BrowserRouter>
-      <div>
-        <Navbar />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          {/* <Route path="/blogs" element={<BlogsPage blogsData={blogs} />} /> */}
-          {/* <Route
+      <TimerProvider>
+        <div>
+          <Navbar />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            {/* <Route path="/blogs" element={<BlogsPage blogsData={blogs} />} /> */}
+            {/* <Route
               path="/blogs/:blogId"
               element={<SingleBlogPage blogData={blogs} />}
             /> */}
-          <Route path="data" element={<PrivateRoute />}>
-            <Route path="/data" element={<Data />} />
-          </Route>
-          <Route path="reminder" element={<PrivateRoute />}>
-            <Route path="/reminder" element={<Reminder />} />
-          </Route>
-          <Route path="medicine/add" element={<PrivateRoute />}>
-            <Route path="/medicine/add" element={<MedicineForm />} />
-          </Route>
-          <Route path="profile" element={<PrivateRoute />}>
-            <Route path="/profile" element={<Profile />} />
-          </Route>
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/medicine/list" element={<ViewMadicine />} />
-          <Route path="/notification" element={<ListNotification />} />
-        </Routes>
-        <Footer />
-      </div>
+            <Route path="data" element={<PrivateRoute />}>
+              <Route path="/data" element={<Data />} />
+            </Route>
+            <Route path="reminder" element={<PrivateRoute />}>
+              <Route path="/reminder" element={<Reminder />} />
+            </Route>
+            <Route path="medicine/add" element={<PrivateRoute />}>
+              <Route path="/medicine/add" element={<MedicineForm />} />
+            </Route>
+            <Route path="profile" element={<PrivateRoute />}>
+              <Route path="/profile" element={<Profile />} />
+            </Route>
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/medicine/list" element={<ViewMadicine />} />
+            <Route path="/notification" element={<ListNotification />} />
+          </Routes>
+          <Footer />
+        </div>
+      </TimerProvider>
     </BrowserRouter>
   );
 }

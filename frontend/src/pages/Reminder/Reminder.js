@@ -1,4 +1,10 @@
-import React, { useState, useRef } from "react";
+import React, {
+  useEffect,
+  useState,
+  useRef,
+  useContext,
+  createContext,
+} from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -19,11 +25,19 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { MobileTimePicker } from "@mui/x-date-pickers/MobileTimePicker";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { TimerContext } from "../../context/TimerContext";
 // import { format } from "date-fns";
 
 const theme = createTheme();
+// const TimerContext = createContext({
+//   timers: {},
+//   startTimer: () => {},
+//   stopTimer: () => {},
+// });
 
 function Reminder() {
+  const { startTimer, stopTimer } = useContext(TimerContext);
+
   const repetitionValue = {
     D: 12,
     W: 12 * 7,
@@ -37,6 +51,7 @@ function Reminder() {
 
   const [medicines, setMedicines] = useState([]);
   const user_id = localStorage.getItem("id");
+  // const { startTimer, stopTimer } = useContext(TimerContext);
 
   React.useEffect(() => {
     fetch(`/api/medicine/${user_id}`, {
@@ -73,16 +88,35 @@ function Reminder() {
       .catch((error) => console.error(error));
 
     //if statement when stop TODO
+
+    //  useEffect(() => {
     const timeForReminder =
       (repetitionValue[repetition] / frequency) * 60 * 60 * 1000; // in milisecond
     console.log(timeForReminder);
-    const timeout = setTimeout(() => {
-      console.log("intimeout");
-      addNotification(reminderData, frequency, repetition);
-    }, timeForReminder);
-    return () => clearTimeout(timeout);
+    const timerId = "myTimer";
+    startTimer(
+      timerId,
+      () => {
+        console.log("intimeout");
+
+        addNotification(reminderData, frequency, repetition);
+      },
+      timeForReminder
+    );
+
+    return () => stopTimer(timerId);
+    //  }, []);
+
+    // const timeForReminder =
+    //   (repetitionValue[repetition] / frequency) * 60 * 60 * 1000; // in milisecond
+    // console.log(timeForReminder);
+    // const timeout = setTimeout(() => {
+    //   console.log("intimeout");
+    //   // addNotification(reminderData, frequency, repetition);
+    // }, timeForReminder);
+    // return () => clearTimeout(timeout);
   };
-  const handleSubmit = (e) => {
+  function HandleSubmit(e) {
     e.preventDefault();
     const dataForm = new FormData(e.currentTarget);
     const dosage = dataForm.get("dosage");
@@ -120,7 +154,7 @@ function Reminder() {
       .catch((error) => console.error(error));
     const message = medicine;
     const isRead = false;
-    const reminderData = {
+    const notificationData = {
       user_id,
       message,
       isRead,
@@ -144,11 +178,30 @@ function Reminder() {
     console.log(diffInMs);
 
     const timeForReminder = diffInMs;
-    const timeout = setTimeout(() => {
-      addNotification(reminderData, frequency, repetition);
-    }, timeForReminder);
-    return () => clearTimeout(timeout);
-  };
+    // (() => {
+    //   console.log("Effect triggered");
+    //   document.title = `Clicked ${count} times`;
+    // })();
+    // useEffect(() => {
+    const timerId = "myTimer";
+    startTimer(
+      timerId,
+      () => {
+        addNotification(notificationData, frequency, repetition);
+        // console.log("timer is done");
+      },
+      timeForReminder
+    );
+
+    return () => stopTimer(timerId);
+    // }, []);
+
+    // const timeout = setTimeout(() => {
+    //   console.log("timer is done")
+    //   // addNotification(notificationData, frequency, repetition);
+    // }, timeForReminder);
+    // return () => clearTimeout(timeout);
+  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -167,7 +220,7 @@ function Reminder() {
           </Typography>
           <Box
             component="form"
-            onSubmit={handleSubmit}
+            onSubmit={HandleSubmit}
             sx={{ mt: 1, width: "100%" }}
           >
             <Paper
