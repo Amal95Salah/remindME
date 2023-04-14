@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import { /* useState, */ useEffect } from "react";
 
 function Notification(props) {
   const { numberNotification, setNumberNotification } = props;
-  const [notification, setNotification] = useState(null);
   const token = localStorage.getItem("token");
   const id = localStorage.getItem("id");
-  React.useEffect(() => {
+
+  useEffect(() => {
     fetch(`/api/notification/count/${id}`, {
       headers: {
         Authorization: token,
@@ -17,7 +17,8 @@ function Notification(props) {
         setNumberNotification(data.count);
       })
       .catch((error) => console.error(error));
-  }, [id]);
+  }, [id, setNumberNotification, token ]);
+  
   // if (!notification) {
   //   return null; // No notification to display
   // }

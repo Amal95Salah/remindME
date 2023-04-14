@@ -37,7 +37,7 @@ app.post("/api/signup", (req, res) => {
   db.query(
     "INSERT INTO users (email, password, firstName, lastName) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE email = email",
     [email, hashedPassword, firstName, lastName],
-    (error, results) => {
+    (error) => {
       if (error) throw error;
       res.json({ message: "User created" });
     }
@@ -94,10 +94,24 @@ app.get("/api/data", verifyToken, (req, res) => {
 });
 app.get("/api/medicine/:user_id", verifyToken, (req, res) => {
   const { user_id } = req.params;
-  const pageSize = 6; // Set the number of items per page
+  // const pageSize = 6; // Set the number of items per page
   const sql =
-    "SELECT * FROM user_medicine JOIN medicine ON user_medicine.medicine_id = medicine.id WHERE user_medicine.user_id = ? LIMIT ?";
-  db.query(sql, [user_id, pageSize], (err, result) => {
+    "SELECT * FROM user_medicine JOIN medicine ON user_medicine.medicine_id = medicine.id WHERE user_medicine.user_id = ? ";
+  db.query(sql, [user_id], (err, result) => {
+    if (err) {
+      throw err;
+    }
+    console.log(result);
+    res.send(result);
+  });
+});
+
+app.get("/api/reminder/:user_id", verifyToken, (req, res) => {
+  const { user_id } = req.params;
+  // const pageSize = 6; // Set the number of items per page
+  const sql =
+    "SELECT * FROM reminder  WHERE user_id = ? ";
+  db.query(sql, [user_id], (err, result) => {
     if (err) {
       throw err;
     }
@@ -166,7 +180,7 @@ function insertMedicineUser(user_id, medicine_id) {
   db.query(
     "INSERT INTO user_medicine (user_id, medicine_id) VALUES (?, ?)",
     [user_id, medicine_id],
-    (error, resultss) => {
+    (error) => {
       if (error) throw error;
     }
   );
@@ -199,7 +213,7 @@ app.post("/api/reminder/add", verifyToken, (req, res) => {
       time,
       note,
     ],
-    (error, results) => {
+    (error) => {
       if (error) throw error;
       res.json({ message: "reminder is added" });
     }
@@ -264,7 +278,7 @@ app.put("/api/notification/read/:notificationId/", (req, res) => {
   db.query(
     "UPDATE notification SET isRead = TRUE WHERE id = ?",
     [notificationId],
-    (error, results) => {
+    (error) => {
       if (error) throw error;
       res.json({ message: "Notification updated" });
     }
@@ -276,7 +290,7 @@ app.post("/api/notification/add", verifyToken, (req, res) => {
   db.query(
     "INSERT INTO notification (message,isRead,user_id ) VALUES (?,?,?)",
     [message, isRead, user_id],
-    (error, results) => {
+    (error) => {
       if (error) throw error;
       res.json({ message: "notification is added" });
     }

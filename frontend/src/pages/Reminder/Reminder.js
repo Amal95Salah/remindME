@@ -1,39 +1,21 @@
-import React, {
-  useEffect,
-  useState,
-  useRef,
-  useContext,
-  createContext,
-} from "react";
-import Avatar from "@mui/material/Avatar";
+import React, { useEffect, useState, useContext } from "react";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
-import Link from "@mui/material/Link";
-import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
-import { Card, FormControl, InputLabel, Paper } from "@mui/material";
+import { FormControl, InputLabel, Paper } from "@mui/material";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { MobileTimePicker } from "@mui/x-date-pickers/MobileTimePicker";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { TimerContext } from "../../context/TimerContext";
-// import { format } from "date-fns";
 
 const theme = createTheme();
-// const TimerContext = createContext({
-//   timers: {},
-//   startTimer: () => {},
-//   stopTimer: () => {},
-// });
 
 function Reminder() {
   const { startTimer, stopTimer } = useContext(TimerContext);
@@ -53,7 +35,7 @@ function Reminder() {
   const user_id = localStorage.getItem("id");
   // const { startTimer, stopTimer } = useContext(TimerContext);
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetch(`/api/medicine/${user_id}`, {
       headers: {
         Authorization: localStorage.getItem("token"),
@@ -66,9 +48,9 @@ function Reminder() {
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+  }, [user_id]);
 
-  const addNotification = (reminderData, frequency, repetition) => {
+  const addNotification = (reminderData, frequency, repetition, endTime) => {
     console.log("inadd notificaion");
     fetch("/api/notification/add", {
       method: "POST",
@@ -87,35 +69,26 @@ function Reminder() {
       })
       .catch((error) => console.error(error));
 
-    //if statement when stop TODO
+    const currentTime = new Date().getDate();
+    if (currentTime < endTime.getDate()) {
+      //if statement when stop TODO
+      //1440
+      const timeForReminder =
+        (repetitionValue[repetition] / frequency) * 60 * 60 * 1000; // in milisecond
+      console.log(timeForReminder);
+      const timerId = "myTimer";
+      startTimer(
+        timerId,
+        () => {
+          addNotification(reminderData, frequency, repetition, endTime);
+        },
+        timeForReminder
+      );
 
-    //  useEffect(() => {
-    const timeForReminder =
-      (repetitionValue[repetition] / frequency) * 60 * 60 * 1000; // in milisecond
-    console.log(timeForReminder);
-    const timerId = "myTimer";
-    startTimer(
-      timerId,
-      () => {
-        console.log("intimeout");
-
-        addNotification(reminderData, frequency, repetition);
-      },
-      timeForReminder
-    );
-
-    return () => stopTimer(timerId);
-    //  }, []);
-
-    // const timeForReminder =
-    //   (repetitionValue[repetition] / frequency) * 60 * 60 * 1000; // in milisecond
-    // console.log(timeForReminder);
-    // const timeout = setTimeout(() => {
-    //   console.log("intimeout");
-    //   // addNotification(reminderData, frequency, repetition);
-    // }, timeForReminder);
-    // return () => clearTimeout(timeout);
+      return () => stopTimer(timerId);
+    }
   };
+
   function HandleSubmit(e) {
     e.preventDefault();
     const dataForm = new FormData(e.currentTarget);
@@ -133,8 +106,6 @@ function Reminder() {
       time: time?.toISOString().slice(11, 16),
       note,
     };
-
-    console.log(data);
 
     fetch("/api/reminder/add", {
       method: "POST",
@@ -162,6 +133,8 @@ function Reminder() {
 
     // Calculate the time until the scheduled notification
     const startTime = startDate ? new Date(startDate) : null;
+    const endTime = startDate ? new Date(endDate) : null;
+
     const timeValue = time ? time.toDate() : null;
     const currentTime = new Date().getTime();
     let diffInMs = 0;
@@ -178,29 +151,16 @@ function Reminder() {
     console.log(diffInMs);
 
     const timeForReminder = diffInMs;
-    // (() => {
-    //   console.log("Effect triggered");
-    //   document.title = `Clicked ${count} times`;
-    // })();
-    // useEffect(() => {
     const timerId = "myTimer";
     startTimer(
       timerId,
       () => {
-        addNotification(notificationData, frequency, repetition);
-        // console.log("timer is done");
+        addNotification(notificationData, frequency, repetition, endTime);
       },
       timeForReminder
     );
 
     return () => stopTimer(timerId);
-    // }, []);
-
-    // const timeout = setTimeout(() => {
-    //   console.log("timer is done")
-    //   // addNotification(notificationData, frequency, repetition);
-    // }, timeForReminder);
-    // return () => clearTimeout(timeout);
   }
 
   return (

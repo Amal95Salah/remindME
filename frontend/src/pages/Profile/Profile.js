@@ -1,34 +1,22 @@
-import React, { useState, useRef, Profiler } from "react";
-import Avatar from "@mui/material/Avatar";
+import React, { useState, useEffect } from "react";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
-import Link from "@mui/material/Link";
-import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
-import { Card, FormControl, InputLabel, Paper } from "@mui/material";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { MobileTimePicker } from "@mui/x-date-pickers/MobileTimePicker";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { Paper } from "@mui/material";
 
 const theme = createTheme();
 
 function Profile() {
-  const [user, setUser] = React.useState("");
+  const [user, setUser] = useState("");
 
   const token = localStorage.getItem("token");
   const id = localStorage.getItem("id");
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetch(`/api/user/${id}`, {
       headers: {
         // Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -40,7 +28,7 @@ function Profile() {
         setUser(data);
       })
       .catch((error) => console.error(error));
-  }, [id]);
+  }, [id, token]);
 
   const handleSubmit = (e) => {
     e.preventDefault();

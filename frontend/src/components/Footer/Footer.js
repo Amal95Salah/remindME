@@ -11,7 +11,6 @@ export default function Footer() {
       variant="outlined"
       sx={{
         width: "100%",
-        marginTop: "10%",
       }}
     >
       <Container maxWidth="lg">

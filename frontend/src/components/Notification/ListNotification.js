@@ -1,18 +1,15 @@
 import * as React from "react";
+import { useState, useEffect } from "react";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
-import ListItemAvatar from "@mui/material/ListItemAvatar";
-import Avatar from "@mui/material/Avatar";
-import ImageIcon from "@mui/icons-material/Image";
-import WorkIcon from "@mui/icons-material/Work";
-import BeachAccessIcon from "@mui/icons-material/BeachAccess";
+
 export default function ListNotification(props) {
   const { numberNotification, setNumberNotification } = props;
 
   const token = localStorage.getItem("token");
   const id = localStorage.getItem("id");
-  const [notification, setNotification] = React.useState([]);
+  const [notification, setNotification] = useState([]);
   function HandleItemClick(notificationId) {
     if (notificationId) {
       fetch(
@@ -37,7 +34,7 @@ export default function ListNotification(props) {
     }
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetch(`/api/notification/${id}`, {
       headers: {
         Authorization: token,
@@ -49,7 +46,7 @@ export default function ListNotification(props) {
         setNotification(data);
       })
       .catch((error) => console.error(error));
-  }, [id]);
+  }, [id, token]);
 
   return (
     <List sx={{ width: "100%" }}>

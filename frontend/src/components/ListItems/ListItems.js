@@ -9,64 +9,59 @@ import PeopleIcon from "@mui/icons-material/People";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import LayersIcon from "@mui/icons-material/Layers";
 import AssignmentIcon from "@mui/icons-material/Assignment";
+import { Link } from "react-router-dom";
+import MedicationIcon from "@mui/icons-material/Medication";
+import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 
 export const mainListItems = (
   <React.Fragment>
-    <ListItemButton>
-      <ListItemIcon>
-        <DashboardIcon />
-      </ListItemIcon>
-      <ListItemText primary="Dashboard" />
-    </ListItemButton>
-    <ListItemButton>
-      <ListItemIcon>
-        <ShoppingCartIcon />
-      </ListItemIcon>
-      <ListItemText primary="Orders" />
-    </ListItemButton>
-    <ListItemButton>
-      <ListItemIcon>
-        <PeopleIcon />
-      </ListItemIcon>
-      <ListItemText primary="Customers" />
-    </ListItemButton>
-    <ListItemButton>
-      <ListItemIcon>
-        <BarChartIcon />
-      </ListItemIcon>
-      <ListItemText primary="Reports" />
-    </ListItemButton>
-    <ListItemButton>
-      <ListItemIcon>
-        <LayersIcon />
-      </ListItemIcon>
-      <ListItemText primary="Integrations" />
-    </ListItemButton>
-  </React.Fragment>
-);
-
-export const secondaryListItems = (
-  <React.Fragment>
-    <ListSubheader component="div" inset>
-      Saved reports
-    </ListSubheader>
-    <ListItemButton>
-      <ListItemIcon>
-        <AssignmentIcon />
-      </ListItemIcon>
-      <ListItemText primary="Current month" />
-    </ListItemButton>
-    <ListItemButton>
-      <ListItemIcon>
-        <AssignmentIcon />
-      </ListItemIcon>
-      <ListItemText primary="Last quarter" />
-    </ListItemButton>
-    <ListItemButton>
-      <ListItemIcon>
-        <AssignmentIcon />
-      </ListItemIcon>
-      <ListItemText primary="Year-end sale" />
-    </ListItemButton>
+    <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
+      <ListItemButton>
+        <ListItemIcon>
+          <NotificationsActiveIcon />
+        </ListItemIcon>
+        <ListItemText primary="Reminders" />
+      </ListItemButton>
+    </Link>
+    <Link
+      to="/medicine/list"
+      style={{ textDecoration: "none", color: "inherit" }}
+    >
+      <ListItemButton>
+        <ListItemIcon>
+          <MedicationIcon />
+        </ListItemIcon>
+        <ListItemText primary="Medicines" />
+      </ListItemButton>
+    </Link>
+    <Link
+      to="/notification"
+      style={{ textDecoration: "none", color: "inherit" }}
+    >
+      <ListItemButton>
+        <ListItemIcon>
+          <LayersIcon />
+        </ListItemIcon>
+        <ListItemText primary="Notifications" />
+      </ListItemButton>
+    </Link>
+    <Link to="/profile" style={{ textDecoration: "none", color: "inherit" }}>
+      <ListItemButton>
+        <ListItemIcon>
+          <AccountCircleIcon />
+        </ListItemIcon>
+        <ListItemText primary="Profile" />
+      </ListItemButton>
+    </Link>
+    <Link to="/profile" style={{ textDecoration: "none", color: "inherit" }}>
+      <ListItemButton>
+        <ListItemIcon>
+          <ExitToAppIcon />
+        </ListItemIcon>
+        <ListItemText primary="Sign out" />
+      </ListItemButton>
+    </Link>
   </React.Fragment>
 );
