@@ -1,10 +1,9 @@
-const express = require("express");
-const cors = require("cors");
-const mysql = require("mysql"); // middleware to enablet Cross-Origin Resource Sharing
-
 const app = express();
-const bcrypt = require("bcrypt"); // hash the password
-const jwt = require("jsonwebtoken"); //create token
+const cors = require("cors");
+const mysql = require("mysql");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const express = require("express");
 
 const port = 5000;
 
@@ -31,9 +30,10 @@ app.listen(port, () => {
 });
 
 app.post("/api/signup", (req, res) => {
-  console.log(req.body);
   const { email, password, firstName, lastName } = req.body;
+
   const hashedPassword = bcrypt.hashSync(password, 10);
+
   db.query(
     "INSERT INTO users (email, password, firstName, lastName) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE email = email",
     [email, hashedPassword, firstName, lastName],
@@ -59,8 +59,6 @@ app.post("/api/login", (req, res) => {
         const token = jwt.sign({ id }, "secret");
         res.json({ token: token });
       } else {
-        console.log("notuth");
-
         res.status(401).json({ message: "Unauthorized" });
       }
     }
@@ -72,7 +70,6 @@ app.get("/api/user/:id", verifyToken, (req, res) => {
   db.query("SELECT * FROM users WHERE id = ?", [id], (error, result) => {
     if (error) throw error;
     if (result.length === 0) {
-      console.log("no user", id);
       return res.status(404).json({ message: "User not found" });
     } else {
       const user = result[0];
@@ -82,13 +79,11 @@ app.get("/api/user/:id", verifyToken, (req, res) => {
 });
 
 app.get("/api/data", verifyToken, (req, res) => {
-  console.log("data");
   const sql = "SELECT * FROM my_table";
   db.query(sql, (err, result) => {
     if (err) {
       throw err;
     }
-    console.log(result);
     res.send(result);
   });
 });
@@ -101,7 +96,6 @@ app.get("/api/medicine/:user_id", verifyToken, (req, res) => {
     if (err) {
       throw err;
     }
-    console.log(result);
     res.send(result);
   });
 });
@@ -109,13 +103,11 @@ app.get("/api/medicine/:user_id", verifyToken, (req, res) => {
 app.get("/api/reminder/:user_id", verifyToken, (req, res) => {
   const { user_id } = req.params;
   // const pageSize = 6; // Set the number of items per page
-  const sql =
-    "SELECT * FROM reminder  WHERE user_id = ? ";
+  const sql = "SELECT * FROM reminder  WHERE user_id = ? ";
   db.query(sql, [user_id], (err, result) => {
     if (err) {
       throw err;
     }
-    console.log(result);
     res.send(result);
   });
 });
@@ -126,7 +118,6 @@ app.get("/api/profile", verifyToken, (req, res) => {
     if (err) {
       throw err;
     }
-    console.log(result);
     res.send(result);
   });
 });
@@ -137,7 +128,6 @@ app.post("/api/signout", (req, res) => {
 });
 
 function verifyToken(req, res, next) {
-  // console.log("yes", req, res, next);
   // Get token from header, cookie, or query parameter
   const token = req.headers.authorization;
   //|| req.cookies.token || req.query.token;
@@ -162,7 +152,6 @@ function verifyToken(req, res, next) {
 }
 
 app.post("/api/medicine/:user_id", verifyToken, (req, res) => {
-  console.log(req.body);
   const { name } = req.body;
   const { user_id } = req.params;
   db.query(
@@ -187,7 +176,6 @@ function insertMedicineUser(user_id, medicine_id) {
 }
 
 app.post("/api/reminder/add", verifyToken, (req, res) => {
-  console.log(req.body);
 
   const {
     user_id,
@@ -213,9 +201,11 @@ app.post("/api/reminder/add", verifyToken, (req, res) => {
       time,
       note,
     ],
-    (error) => {
+    (error,results) => {
       if (error) throw error;
-      res.json({ message: "reminder is added" });
+      const id = results.insertId;
+
+      res.json({ message: "reminder is added",id });
     }
   );
 });
@@ -263,7 +253,7 @@ app.get("/api/notification/:userId", (req, res) => {
 
   // Execute a MySQL query to count the number of unread notifications for the user
   db.query(
-    "SELECT * FROM notification WHERE user_id = ? AND isRead = FALSE",
+    "SELECT * FROM notification WHERE user_id = ? AND isRead = FALSE ORDER BY id DESC",
     [userId],
     (error, results) => {
       if (error) throw error;
@@ -271,6 +261,21 @@ app.get("/api/notification/:userId", (req, res) => {
     }
   );
 });
+
+app.get("/api/notification/all/:userId", (req, res) => {
+  const { userId } = req.params;
+
+  // Execute a MySQL query to count the number of unread notifications for the user
+  db.query(
+    "SELECT * FROM notification WHERE user_id = ? ORDER BY id DESC",
+    [userId],
+    (error, results) => {
+      if (error) throw error;
+      res.json(results);
+    }
+  );
+});
+
 app.put("/api/notification/read/:notificationId/", (req, res) => {
   const { notificationId } = req.params;
 
@@ -286,10 +291,11 @@ app.put("/api/notification/read/:notificationId/", (req, res) => {
 });
 
 app.post("/api/notification/add", verifyToken, (req, res) => {
-  const { message, isRead, user_id } = req.body;
+  const { reminder_id, message, isRead, user_id } = req.body;
+  
   db.query(
-    "INSERT INTO notification (message,isRead,user_id ) VALUES (?,?,?)",
-    [message, isRead, user_id],
+    "INSERT INTO notification (reminder_id,message,isRead,user_id ) VALUES (?,?,?,?)",
+    [reminder_id, message, isRead, user_id],
     (error) => {
       if (error) throw error;
       res.json({ message: "notification is added" });
@@ -297,4 +303,78 @@ app.post("/api/notification/add", verifyToken, (req, res) => {
   );
 });
 
-// /api/notification
+app.delete("/api/reminder/:id", verifyToken, (req, res) => {
+  const { id } = req.params;
+
+  db.query("DELETE FROM reminder WHERE id = ?", [id], (error) => {
+    if (error) throw error;
+    res.json({ message: "reminder is deleted" });
+    console.log("deleted reminder");
+  });
+});
+
+app.delete("/api/notification/reminder/:reminder_id", verifyToken, (req, res) => {
+  const { reminder_id } = req.params;
+
+  db.query(
+    "DELETE FROM notification WHERE reminder_id = ?",
+    [reminder_id],
+    (error) => {
+      if (error) throw error;
+      res.json({ message: "notification is deleted" });
+      console.log("deleted notification");
+    }
+  );
+});
+
+// delete medicine
+app.delete("/api/medicine/:id", verifyToken, (req, res) => {
+  const { id } = req.params;
+
+  // delete medicine from user table before delete medicine from medicine table
+  db.query("DELETE FROM user_medicine WHERE medicine_id = ?", [id], (error) => {
+    if (error) throw error;
+    console.log("deleted medicine from user_medicine");
+  });
+
+  db.query("DELETE FROM medicine WHERE id = ?", [id], (error) => {
+    if (error) throw error;
+    res.json({ message: "medicine is deleted" });
+    console.log("deleted medicine");
+  });
+});
+
+app.put("/api/reminder/:id", verifyToken, (req, res) => {
+  const { id } = req.params;
+
+  const {
+    medicine,
+    dosage,
+    repetition,
+    frequency,
+    startDate,
+    endDate,
+    time,
+    note,
+  } = req.body;
+
+  db.query(
+    "UPDATE reminder SET medicine = ?, dosage = ?, repetition = ?, frequency = ?, startDate = ?, endDate = ?, time = ?, note = ? WHERE id = ?",
+    [
+      medicine,
+      dosage,
+      repetition,
+      frequency,
+      startDate,
+      endDate,
+      time,
+      note,
+      id,
+    ],
+    (error) => {
+      if (error) throw error;
+      res.json({ message: "reminder is updated" });
+      console.log("updated");
+    }
+  );
+});

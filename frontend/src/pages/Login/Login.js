@@ -1,36 +1,38 @@
 import React, { useState } from "react";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import CssBaseline from "@mui/material/CssBaseline";
-import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
-import Link from "@mui/material/Link";
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Alert } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import jwt_decode from "jwt-decode";
 
+import Box from "@mui/material/Box";
+import Link from "@mui/material/Link";
+import Grid from "@mui/material/Grid";
+import Avatar from "@mui/material/Avatar";
+import Button from "@mui/material/Button";
+import Checkbox from "@mui/material/Checkbox";
+import TextField from "@mui/material/TextField";
+import Container from "@mui/material/Container";
+import Typography from "@mui/material/Typography";
+import CssBaseline from "@mui/material/CssBaseline";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+
 const theme = createTheme();
 
 function Login() {
-  // const [username, setUsername] = useState("");
-  // const [password, setPassword] = useState("");
   const [loginSuccess, setLoginSuccess] = useState();
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
     const dataForm = new FormData(e.currentTarget);
+
     const email = dataForm.get("email");
     const password = dataForm.get("password");
+
     const data = { email, password };
-    // const data = { email, password };
+
     fetch("/api/login", {
       method: "POST",
       headers: {
@@ -39,7 +41,6 @@ function Login() {
       body: JSON.stringify(data),
     })
       .then((response) => {
-        // Parse the response to JSON
         if (!response.ok) {
           setLoginSuccess(false);
           throw new Error("Invalid credentials");
@@ -52,8 +53,6 @@ function Login() {
         return response.json();
       })
       .then((data) => {
-        // Save the token in localStorage
-
         const decoded = jwt_decode(data.token);
         const id = decoded.id;
         localStorage.setItem("token", data.token);
@@ -67,7 +66,7 @@ function Login() {
         <CssBaseline />
         <Box
           sx={{
-            marginTop: 8,
+            my: 8,
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
@@ -80,7 +79,7 @@ function Login() {
               </span>
             </Alert>
           )}
-          {loginSuccess == false && (
+          {loginSuccess === false && (
             <Alert severity="error">
               <span>
                 <span>Alert!</span> Invalid credentials
@@ -104,7 +103,7 @@ function Login() {
               required
               fullWidth
               id="email"
-              label="email Address"
+              label="Email Address"
               name="email"
               autoComplete="email"
               autoFocus
@@ -149,31 +148,5 @@ function Login() {
     </ThemeProvider>
   );
 }
-// return (
-//   <div>
-//     <h1>Login</h1>
-//     <form onSubmit={handleSubmit}>
-//       <label>
-//         Username:
-//         <input
-//           type="text"
-//           value={username}
-//           onChange={(e) => setUsername(e.target.value)}
-//         />
-//       </label>
-//       <br />
-//       <label>
-//         Password:
-//         <input
-//           type="password"
-//           value={password}
-//           onChange={(e) => setPassword(e.target.value)}
-//         />
-//       </label>
-//       <br />
-//       <button type="submit">Submit</button>
-//     </form>
-//   </div>
-// );
 
 export default Login;

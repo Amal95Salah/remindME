@@ -2,8 +2,8 @@ import React, { createContext, useState } from "react";
 
 const TimerContext = createContext({
   timers: {},
-  startTimer: () => {},
   stopTimer: () => {},
+  startTimer: () => {},
 });
 
 function TimerProvider(props) {
@@ -31,22 +31,3 @@ function TimerProvider(props) {
   );
 }
 export { TimerContext, TimerProvider };
-
-// function MyComponent(props) {
-//   const { startTimer, stopTimer } = useContext(TimerContext);
-
-//   useEffect(() => {
-//     const timerId = "myTimer";
-//     startTimer(
-//       timerId,
-//       () => {
-//         addNotification(reminderData, frequency, repetition);
-//       },
-//       timeForReminder
-//     );
-
-//     return () => stopTimer(timerId);
-//   }, []);
-
-//   // ...
-// }

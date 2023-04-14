@@ -1,5 +1,6 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
+
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
@@ -10,6 +11,7 @@ export default function ListNotification(props) {
   const token = localStorage.getItem("token");
   const id = localStorage.getItem("id");
   const [notification, setNotification] = useState([]);
+
   function HandleItemClick(notificationId) {
     if (notificationId) {
       fetch(
@@ -53,11 +55,7 @@ export default function ListNotification(props) {
       {notification.map((item) => (
         <ListItem
           key={item.id}
-          style={
-            // index === 1 || index === 2 ?
-            { width: "100%" }
-            //  : null
-          }
+          style={{ width: "100%" }}
           button
           onClick={() => HandleItemClick(item.id)}
         >

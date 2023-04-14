@@ -1,32 +1,35 @@
 import * as React from "react";
-import AppBar from "@mui/material/AppBar";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 import Box from "@mui/material/Box";
+import Menu from "@mui/material/Menu";
+import Badge from "@mui/material/Badge";
+import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
+import MenuItem from "@mui/material/MenuItem";
+import MenuIcon from "@mui/icons-material/Menu";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
-import Badge from "@mui/material/Badge";
-import MenuItem from "@mui/material/MenuItem";
-import Menu from "@mui/material/Menu";
-import MenuIcon from "@mui/icons-material/Menu";
-import AccountCircle from "@mui/icons-material/AccountCircle";
-import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
-import { useNavigate } from "react-router-dom";
 import Notification from "../Notification/Notification";
+import AccountCircle from "@mui/icons-material/AccountCircle";
 import ListNotification from "../Notification/ListNotification";
-import { useState } from "react";
+import NotificationsIcon from "@mui/icons-material/Notifications";
 
-export default function Navbar() {
+export default function Navbar({ toggleDrawer }) {
   const [anchorEl, setAnchorEl] = useState(null);
-  const [anchorElNotification, setAnchorElNotification] = useState(null);
   const [numberNotification, setNumberNotification] = useState(0);
-
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
+  const [anchorElNotification, setAnchorElNotification] = useState(null);
+
   const navigate = useNavigate();
 
   const isMenuOpen = Boolean(anchorEl);
   const isNotificationOpen = Boolean(anchorElNotification);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+
+  const token = localStorage.getItem("token");
 
   const handleProfileMenuOpen = (event) => {
     console.log(event.currentTarget);
@@ -89,16 +92,8 @@ export default function Navbar() {
   const renderNotification = (
     <Menu
       anchorEl={anchorElNotification}
-      // anchorOrigin={{
-      //   vertical: "top",
-      //   horizontal: "left",
-      // }}
-      id={notificationId} //delete
+      id={notificationId}
       keepMounted
-      // transformOrigin={{
-      //   vertical: "top",
-      //   horizontal: "right",
-      // }}
       open={isNotificationOpen}
       onClose={handleNotificationClose}
     >
@@ -128,21 +123,13 @@ export default function Navbar() {
       open={isMobileMenuOpen}
       onClose={handleMobileMenuClose}
     >
-      {/* <MenuItem>
-        <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-          <Badge badgeContent={4} color="error">
-            <MailIcon />
-          </Badge>
-        </IconButton>
-        <p>Messages</p>
-      </MenuItem> */}
       <MenuItem>
         <IconButton
           size="large"
-          aria-label="show 17 new notifications"
+          aria-label={`show ${numberNotification} new notifications`}
           color="inherit"
         >
-          <Badge badgeContent={17} color="error">
+          <Badge badgeContent={numberNotification} color="error">
             <NotificationsIcon />
           </Badge>
         </IconButton>
@@ -173,6 +160,7 @@ export default function Navbar() {
             color="inherit"
             aria-label="open drawer"
             sx={{ mr: 2 }}
+            onClick={toggleDrawer}
           >
             <MenuIcon />
           </IconButton>
@@ -184,52 +172,54 @@ export default function Navbar() {
           >
             Remind Me
           </Typography>
-          <Box sx={{ flexGrow: 1 }} />
-          <Box sx={{ display: { xs: "none", md: "flex" } }}>
-            <IconButton
-              size="large"
-              aria-label="show 4 new mails"
-              color="inherit"
-              // edge="end"
-              onClick={handleNotification}
-              // aria-controls={notificationId}
-            >
-              <Badge
-                badgeContent={
-                  <Notification
-                    numberNotification={numberNotification}
-                    setNumberNotification={setNumberNotification}
-                  />
-                }
-                color="error"
-              >
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
-            <IconButton
-              size="large"
-              edge="end"
-              aria-label="account of current user"
-              aria-controls={menuId}
-              aria-haspopup="true"
-              onClick={handleProfileMenuOpen}
-              color="inherit"
-            >
-              <AccountCircle />
-            </IconButton>
-          </Box>
-          <Box sx={{ display: { xs: "flex", md: "none" } }}>
-            <IconButton
-              size="large"
-              aria-label="show more"
-              aria-controls={mobileMenuId}
-              aria-haspopup="true"
-              onClick={handleMobileMenuOpen}
-              color="inherit"
-            >
-              <MoreIcon />
-            </IconButton>
-          </Box>
+          {token && (
+            <>
+              <Box sx={{ flexGrow: 1 }} />
+              <Box sx={{ display: { xs: "none", md: "flex" } }}>
+                <IconButton
+                  size="large"
+                  aria-label="show 4 new mails"
+                  color="inherit"
+                  onClick={handleNotification}
+                >
+                  <Badge
+                    badgeContent={
+                      <Notification
+                        numberNotification={numberNotification}
+                        setNumberNotification={setNumberNotification}
+                      />
+                    }
+                    color="error"
+                  >
+                    <NotificationsIcon />
+                  </Badge>
+                </IconButton>
+                <IconButton
+                  size="large"
+                  edge="end"
+                  aria-label="account of current user"
+                  aria-controls={menuId}
+                  aria-haspopup="true"
+                  onClick={handleProfileMenuOpen}
+                  color="inherit"
+                >
+                  <AccountCircle />
+                </IconButton>
+              </Box>
+              <Box sx={{ display: { xs: "flex", md: "none" } }}>
+                <IconButton
+                  size="large"
+                  aria-label="show more"
+                  aria-controls={mobileMenuId}
+                  aria-haspopup="true"
+                  onClick={handleMobileMenuOpen}
+                  color="inherit"
+                >
+                  <MoreIcon />
+                </IconButton>
+              </Box>
+            </>
+          )}
         </Toolbar>
       </AppBar>
       {renderMobileMenu}

@@ -1,19 +1,20 @@
 import React, { useEffect, useState, useContext } from "react";
-import Button from "@mui/material/Button";
-import CssBaseline from "@mui/material/CssBaseline";
-import TextField from "@mui/material/TextField";
+
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
+import Button from "@mui/material/Button";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
+import Container from "@mui/material/Container";
+import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
+import CssBaseline from "@mui/material/CssBaseline";
+import { TimerContext } from "../../context/TimerContext";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { FormControl, InputLabel, Paper } from "@mui/material";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { MobileTimePicker } from "@mui/x-date-pickers/MobileTimePicker";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { TimerContext } from "../../context/TimerContext";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 
 const theme = createTheme();
 
@@ -21,9 +22,9 @@ function Reminder() {
   const { startTimer, stopTimer } = useContext(TimerContext);
 
   const repetitionValue = {
-    D: 12,
-    W: 12 * 7,
-    M: 12 * 30,
+    D: 24,
+    W: 24 * 7,
+    M: 24 * 30,
   };
   const [medicine, setMedicine] = useState("");
   const [repetition, setRepetition] = useState("");
@@ -33,7 +34,6 @@ function Reminder() {
 
   const [medicines, setMedicines] = useState([]);
   const user_id = localStorage.getItem("id");
-  // const { startTimer, stopTimer } = useContext(TimerContext);
 
   useEffect(() => {
     fetch(`/api/medicine/${user_id}`, {
@@ -50,7 +50,12 @@ function Reminder() {
       });
   }, [user_id]);
 
-  const addNotification = (reminderData, frequency, repetition, endTime) => {
+  const addNotification = (
+    notificationData,
+    frequency,
+    repetition,
+    endTime
+  ) => {
     console.log("inadd notificaion");
     fetch("/api/notification/add", {
       method: "POST",
@@ -58,10 +63,9 @@ function Reminder() {
         "Content-Type": "application/json",
         Authorization: localStorage.getItem("token"),
       },
-      body: JSON.stringify(reminderData),
+      body: JSON.stringify(notificationData),
     })
       .then((response) => {
-        // Parse the response to JSON
         return response.json();
       })
       .then((data) => {
@@ -71,16 +75,14 @@ function Reminder() {
 
     const currentTime = new Date().getDate();
     if (currentTime < endTime.getDate()) {
-      //if statement when stop TODO
-      //1440
       const timeForReminder =
-        (repetitionValue[repetition] / frequency) * 60 * 60 * 1000; // in milisecond
+        (repetitionValue[repetition] / frequency) * 60 * 60 * 1000;
       console.log(timeForReminder);
       const timerId = "myTimer";
       startTimer(
         timerId,
         () => {
-          addNotification(reminderData, frequency, repetition, endTime);
+          addNotification(notificationData, frequency, repetition, endTime);
         },
         timeForReminder
       );
@@ -101,12 +103,12 @@ function Reminder() {
       dosage,
       repetition,
       frequency,
-      startDate: startDate?.toISOString().slice(0, 10), // 2021-10-10T00:00:00.000Z
+      startDate: startDate?.toISOString().slice(0, 10),
       endDate: endDate?.toISOString().slice(0, 10),
       time: time?.toISOString().slice(11, 16),
       note,
     };
-
+    let reminder_id = 60;
     fetch("/api/reminder/add", {
       method: "POST",
       headers: {
@@ -116,51 +118,54 @@ function Reminder() {
       body: JSON.stringify(data),
     })
       .then((response) => {
-        // Parse the response to JSON
         return response.json();
       })
       .then((data) => {
-        console.log(data);
+        reminder_id = data.id;
+
+        console.log("reminder_id", data.id);
+
+        console.log("reinder after", reminder_id);
+        const message = medicine;
+        const isRead = false;
+        const notificationData = {
+          reminder_id,
+          user_id,
+          message,
+          isRead,
+        };
+
+        const startTime = startDate ? new Date(startDate) : null;
+        const endTime = startDate ? new Date(endDate) : null;
+
+        const timeValue = time ? time.toDate() : null;
+        const currentTime = new Date().getTime();
+        let diffInMs = 0;
+        if (startTime && timeValue) {
+          const startTimeWithTime = new Date(
+            startTime.getFullYear(),
+            startTime.getMonth(),
+            startTime.getDate(),
+            timeValue.getHours(),
+            timeValue.getMinutes()
+          );
+          diffInMs = startTimeWithTime.getTime() - currentTime;
+        }
+        console.log(diffInMs);
+
+        const timeForReminder = diffInMs;
+        const timerId = "myTimer";
+        startTimer(
+          timerId,
+          () => {
+            addNotification(notificationData, frequency, repetition, endTime);
+          },
+          timeForReminder
+        );
+
+        return () => stopTimer(timerId);
       })
       .catch((error) => console.error(error));
-    const message = medicine;
-    const isRead = false;
-    const notificationData = {
-      user_id,
-      message,
-      isRead,
-    };
-
-    // Calculate the time until the scheduled notification
-    const startTime = startDate ? new Date(startDate) : null;
-    const endTime = startDate ? new Date(endDate) : null;
-
-    const timeValue = time ? time.toDate() : null;
-    const currentTime = new Date().getTime();
-    let diffInMs = 0;
-    if (startTime && timeValue) {
-      const startTimeWithTime = new Date(
-        startTime.getFullYear(),
-        startTime.getMonth(),
-        startTime.getDate(),
-        timeValue.getHours(),
-        timeValue.getMinutes()
-      );
-      diffInMs = startTimeWithTime.getTime() - currentTime;
-    }
-    console.log(diffInMs);
-
-    const timeForReminder = diffInMs;
-    const timerId = "myTimer";
-    startTimer(
-      timerId,
-      () => {
-        addNotification(notificationData, frequency, repetition, endTime);
-      },
-      timeForReminder
-    );
-
-    return () => stopTimer(timerId);
   }
 
   return (

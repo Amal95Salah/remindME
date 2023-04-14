@@ -1,13 +1,13 @@
 import * as React from "react";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
+
 import Box from "@mui/material/Box";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 import ReminderList from "../Reminder/ReminderList";
 
 const mdTheme = createTheme();
 
 function DashboardContent() {
-
   return (
     <ThemeProvider theme={mdTheme}>
       <Box sx={{ display: "flex", width: "100%" }}>

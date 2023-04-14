@@ -1,29 +1,18 @@
 import React, { useState } from "react";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import CssBaseline from "@mui/material/CssBaseline";
-import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
-import Link from "@mui/material/Link";
-import Grid from "@mui/material/Grid";
+import { useNavigate } from "react-router-dom";
+
 import Box from "@mui/material/Box";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
 import Container from "@mui/material/Container";
+import Typography from "@mui/material/Typography";
+import CssBaseline from "@mui/material/CssBaseline";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
+
 import {
   Alert,
-  Card,
-  FormControl,
-  InputLabel,
   Paper,
-  Radio,
-  RadioGroup,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 
 const theme = createTheme();
 
@@ -57,7 +46,6 @@ function MedicineForm() {
         setTimeout(() => {
           navigate("/medicine/list");
         }, 2000);
-        // Parse the response to JSON
         return response.json();
       })
       .then((data) => {
@@ -109,7 +97,6 @@ function MedicineForm() {
                 autoFocus
                 sx={{ m: 0 }}
               />
-
               <Button type="submit" fullWidth variant="contained">
                 Add Medicine
               </Button>

@@ -1,19 +1,33 @@
 import * as React from "react";
-import ListItemButton from "@mui/material/ListItemButton";
+import { Link, useNavigate } from "react-router-dom";
+
+import LayersIcon from "@mui/icons-material/Layers";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import ListSubheader from "@mui/material/ListSubheader";
-import DashboardIcon from "@mui/icons-material/Dashboard";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import PeopleIcon from "@mui/icons-material/People";
-import BarChartIcon from "@mui/icons-material/BarChart";
-import LayersIcon from "@mui/icons-material/Layers";
-import AssignmentIcon from "@mui/icons-material/Assignment";
-import { Link } from "react-router-dom";
-import MedicationIcon from "@mui/icons-material/Medication";
-import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
+import ListItemButton from "@mui/material/ListItemButton";
+import MedicationIcon from "@mui/icons-material/Medication";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
+
+const SignOut = () => {
+
+  const navigate = useNavigate();
+
+  const handleSignout = () => {
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
+
+  return (
+    <ListItemButton onClick={handleSignout}>
+      <ListItemIcon>
+        <ExitToAppIcon />
+      </ListItemIcon>
+      <ListItemText primary="Sign out" />
+    </ListItemButton>
+  );
+};
 
 export const mainListItems = (
   <React.Fragment>
@@ -55,13 +69,6 @@ export const mainListItems = (
         <ListItemText primary="Profile" />
       </ListItemButton>
     </Link>
-    <Link to="/profile" style={{ textDecoration: "none", color: "inherit" }}>
-      <ListItemButton>
-        <ListItemIcon>
-          <ExitToAppIcon />
-        </ListItemIcon>
-        <ListItemText primary="Sign out" />
-      </ListItemButton>
-    </Link>
+    <SignOut />
   </React.Fragment>
 );

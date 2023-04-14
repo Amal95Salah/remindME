@@ -1,7 +1,8 @@
-import { /* useState, */ useEffect } from "react";
+import { useEffect } from "react";
 
 function Notification(props) {
   const { numberNotification, setNumberNotification } = props;
+  
   const token = localStorage.getItem("token");
   const id = localStorage.getItem("id");
 
@@ -17,19 +18,9 @@ function Notification(props) {
         setNumberNotification(data.count);
       })
       .catch((error) => console.error(error));
-  }, [id, setNumberNotification, token ]);
-  
-  // if (!notification) {
-  //   return null; // No notification to display
-  // }
-  // numberNotification = numberNotification + 1;
-  return numberNotification;
+  }, [id, setNumberNotification, token]);
 
-  // return (
-  //   <div>
-  //     <p>{notification.message}</p>
-  //   </div>
-  // );
+  return numberNotification;
 }
 
 export default Notification;

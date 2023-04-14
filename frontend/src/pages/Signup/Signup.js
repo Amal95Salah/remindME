@@ -1,23 +1,23 @@
 import React, { useState } from "react";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import CssBaseline from "@mui/material/CssBaseline";
-import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
+
+import Box from "@mui/material/Box";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Alert } from "@mui/material";
+import Avatar from "@mui/material/Avatar";
+import Button from "@mui/material/Button";
+import Checkbox from "@mui/material/Checkbox";
+import Container from "@mui/material/Container";
+import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
+import CssBaseline from "@mui/material/CssBaseline";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+
 const theme = createTheme();
 
 function Signup() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
   const [userError, setUserError] = useState();
 
   const handleSubmit = (e) => {
@@ -40,8 +40,6 @@ function Signup() {
       .then((response) => {
         if (!response.ok) {
           setUserError(false);
-
-          // throw new Error("Can not add this user");
         }
         return response.json();
       })
@@ -73,7 +71,7 @@ function Signup() {
             onSubmit={handleSubmit}
             sx={{ mt: 3 }}
           >
-            {userError == false && (
+            {userError === false && (
               <Alert severity="error">
                 <span>
                   <span>Alert!</span> Cant add this user
@@ -149,33 +147,8 @@ function Signup() {
             </Grid>
           </Box>
         </Box>
-        {/* <Copyright sx={{ mt: 5 }} /> */}
       </Container>
     </ThemeProvider>
-    //   <div>
-    //     <h1>Signup</h1>
-    //     <form onSubmit={handleSubmit}>
-    //       <label>
-    //         Username:
-    //         <input
-    //           type="text"
-    //           value={username}
-    //           onChange={(e) => setUsername(e.target.value)}
-    //         />
-    //       </label>
-    //       <br />
-    //       <label>
-    //         Password:
-    //         <input
-    //           type="password"
-    //           value={password}
-    //           onChange={(e) => setPassword(e.target.value)}
-    //         />
-    //       </label>
-    //       <br />
-    //       <button type="submit">Submit</button>
-    //     </form>
-    //   </div>
   );
 }
 

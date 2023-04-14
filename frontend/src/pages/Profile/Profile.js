@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
-import Button from "@mui/material/Button";
-import CssBaseline from "@mui/material/CssBaseline";
-import TextField from "@mui/material/TextField";
+
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Paper } from "@mui/material";
+import Button from "@mui/material/Button";
+import Container from "@mui/material/Container";
+import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
+import CssBaseline from "@mui/material/CssBaseline";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 const theme = createTheme();
 
@@ -19,7 +20,6 @@ function Profile() {
   useEffect(() => {
     fetch(`/api/user/${id}`, {
       headers: {
-        // Authorization: `Bearer ${localStorage.getItem("token")}`,
         Authorization: token,
       },
     })
@@ -51,7 +51,6 @@ function Profile() {
     })
       .then((response) => response.json())
       .then((data) => {
-        // setMessage(data.message);
       })
       .catch((error) => console.error(error));
   };
@@ -62,13 +61,13 @@ function Profile() {
         <CssBaseline />
         <Box
           sx={{
-            marginTop: 8,
+            my: 8,
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
           }}
         >
-          <Typography component="h1" variant="h5">
+          <Typography component="h1" variant="h5" sx={{ mb: 2, fontWeight: 600 }}>
             Profile
           </Typography>
           <Box
@@ -114,7 +113,7 @@ function Profile() {
                 margin="normal"
                 fullWidth
                 name="password"
-                label="password"
+                label="Password"
                 id="password"
                 autoComplete="password"
                 sx={{ m: 0 }}

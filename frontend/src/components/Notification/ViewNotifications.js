@@ -1,43 +1,19 @@
 import * as React from "react";
-import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 
-import { Button } from "@mui/material";
 import Table from "@mui/material/Table";
-import AddIcon from "@mui/icons-material/Add";
 import TableRow from "@mui/material/TableRow";
-import EditIcon from "@mui/icons-material/Edit";
-import TableHead from "@mui/material/TableHead";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
-import DeleteIcon from "@mui/icons-material/Delete";
+import TableHead from "@mui/material/TableHead";
 import TableContainer from "@mui/material/TableContainer";
 
 export default function ViewMadicine() {
   const [data, setData] = useState([]);
   const user_id = localStorage.getItem("id");
 
-  const HandleDelete = (id) => {
-    fetch(`/api/medicine/${id}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: localStorage.getItem("token"),
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-        setData((prevD) =>
-          prevD.filter((medicine) => medicine.id !== id)
-        );
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
   useEffect(() => {
-    fetch(`/api/medicine/${user_id}`, {
+    fetch(`/api/notification/all/${user_id}`, {
       headers: {
         Authorization: localStorage.getItem("token"),
       },
@@ -58,29 +34,22 @@ export default function ViewMadicine() {
         <TableHead>
           <TableRow>
             <TableCell
-              colSpan={2}
+              colSpan={3}
               align="left"
               sx={{ fontWeight: 700, fontSize: 20 }}
             >
-              All Medicines
-            </TableCell>
-            <TableCell align="right">
-              <Link to="/medicine/add">
-                <Button variant="contained" endIcon={<AddIcon />}>
-                  Add Medicine
-                </Button>
-              </Link>
+              All Notifications
             </TableCell>
           </TableRow>
           <TableRow>
             <TableCell align="left" sx={{ fontWeight: 700 }}>
-              Medicine
+              Notification
             </TableCell>
             <TableCell align="left" sx={{ fontWeight: 700 }}>
-              Edit
+              Date and Time
             </TableCell>
             <TableCell align="left" sx={{ fontWeight: 700 }}>
-              Delete
+              Status
             </TableCell>
           </TableRow>
         </TableHead>
@@ -88,20 +57,13 @@ export default function ViewMadicine() {
           {data.map((row) => (
             <TableRow key={row.id}>
               <TableCell component="th" scope="row">
-                {row.name}
+                {row.message}
               </TableCell>
               <TableCell component="th" scope="row">
-                {" "}
-                <Button startIcon={<EditIcon />}>Edit</Button>
+                {row.created_at.slice(0, 10)} {row.created_at.slice(11, 19)}
               </TableCell>
               <TableCell component="th" scope="row">
-                {" "}
-                <Button
-                  onClick={() => HandleDelete(row.id)}
-                  startIcon={<DeleteIcon />}
-                >
-                  Delete
-                </Button>
+                {row.isRead ? "Read" : "Unread"}
               </TableCell>
             </TableRow>
           ))}
