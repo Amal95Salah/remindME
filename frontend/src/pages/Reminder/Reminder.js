@@ -56,7 +56,6 @@ function Reminder() {
     repetition,
     endTime
   ) => {
-    console.log("inadd notificaion");
     fetch("/api/notification/add", {
       method: "POST",
       headers: {
@@ -77,7 +76,6 @@ function Reminder() {
     if (currentTime < endTime.getDate()) {
       const timeForReminder =
         (repetitionValue[repetition] / frequency) * 60 * 60 * 1000;
-      console.log(timeForReminder);
       const timerId = "myTimer";
       startTimer(
         timerId,
@@ -123,9 +121,6 @@ function Reminder() {
       .then((data) => {
         reminder_id = data.id;
 
-        console.log("reminder_id", data.id);
-
-        console.log("reinder after", reminder_id);
         const message = medicine;
         const isRead = false;
         const notificationData = {
@@ -151,7 +146,6 @@ function Reminder() {
           );
           diffInMs = startTimeWithTime.getTime() - currentTime;
         }
-        console.log(diffInMs);
 
         const timeForReminder = diffInMs;
         const timerId = "myTimer";

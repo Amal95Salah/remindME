@@ -10,7 +10,6 @@ function TimerProvider(props) {
   const [timers, setTimers] = useState({});
 
   function startTimer(timerId, callback, delay) {
-    console.log("startTimer", timers);
     const timeout = setTimeout(callback, delay);
     setTimers((prevTimers) => ({ ...prevTimers, timerId: timeout }));
   }

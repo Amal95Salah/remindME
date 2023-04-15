@@ -12,7 +12,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import MoreIcon from "@mui/icons-material/MoreVert";
-import Notification from "../Notification/Notification";
+import NumberOfNotification from "../Notification/NumberOfNotification";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import ListNotification from "../Notification/ListNotification";
 import NotificationsIcon from "@mui/icons-material/Notifications";
@@ -32,12 +32,10 @@ export default function Navbar({ toggleDrawer }) {
   const token = localStorage.getItem("token");
 
   const handleProfileMenuOpen = (event) => {
-    console.log(event.currentTarget);
     setAnchorEl(event.currentTarget);
   };
   const handleNotification = (event) => {
     setAnchorElNotification(event.currentTarget);
-    console.log("clicked");
   };
 
   const handleMobileMenuClose = () => {
@@ -184,7 +182,7 @@ export default function Navbar({ toggleDrawer }) {
                 >
                   <Badge
                     badgeContent={
-                      <Notification
+                      <NumberOfNotification
                         numberNotification={numberNotification}
                         setNumberNotification={setNumberNotification}
                       />

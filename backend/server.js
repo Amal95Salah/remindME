@@ -1,13 +1,12 @@
-const app = express();
 const cors = require("cors");
 const mysql = require("mysql");
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
 const express = require("express");
+const jwt = require("jsonwebtoken");
 
 const port = 5000;
+const app = express();
 
-//connect with database
 const db = mysql.createConnection({
   host: "localhost",
   user: "root",
@@ -28,6 +27,8 @@ app.use(express.json());
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
+
+////// AUTHENTICATION //////
 
 app.post("/api/signup", (req, res) => {
   const { email, password, firstName, lastName } = req.body;
@@ -65,6 +66,30 @@ app.post("/api/login", (req, res) => {
   });
 });
 
+app.post("/api/signout", (req, res) => {
+  res.clearCookie("token");
+  res.json({ message: "Signed out successfully" });
+});
+
+function verifyToken(req, res, next) {
+  const token = req.headers.authorization;
+  if (!token) {
+    return res.status(401).json({ message: "Authorization token is missing" });
+  }
+
+  try {
+    const decoded = jwt.verify(token, "secret");
+
+    req.token = decoded;
+
+    next();
+  } catch (err) {
+    return res.status(401).json({ message: "Authorization token is invalid" });
+  }
+}
+
+////// USER ENDPOINTS //////
+
 app.get("/api/user/:id", verifyToken, (req, res) => {
   const { id } = req.params;
   db.query("SELECT * FROM users WHERE id = ?", [id], (error, result) => {
@@ -78,40 +103,6 @@ app.get("/api/user/:id", verifyToken, (req, res) => {
   });
 });
 
-app.get("/api/data", verifyToken, (req, res) => {
-  const sql = "SELECT * FROM my_table";
-  db.query(sql, (err, result) => {
-    if (err) {
-      throw err;
-    }
-    res.send(result);
-  });
-});
-app.get("/api/medicine/:user_id", verifyToken, (req, res) => {
-  const { user_id } = req.params;
-  // const pageSize = 6; // Set the number of items per page
-  const sql =
-    "SELECT * FROM user_medicine JOIN medicine ON user_medicine.medicine_id = medicine.id WHERE user_medicine.user_id = ? ";
-  db.query(sql, [user_id], (err, result) => {
-    if (err) {
-      throw err;
-    }
-    res.send(result);
-  });
-});
-
-app.get("/api/reminder/:user_id", verifyToken, (req, res) => {
-  const { user_id } = req.params;
-  // const pageSize = 6; // Set the number of items per page
-  const sql = "SELECT * FROM reminder  WHERE user_id = ? ";
-  db.query(sql, [user_id], (err, result) => {
-    if (err) {
-      throw err;
-    }
-    res.send(result);
-  });
-});
-
 app.get("/api/profile", verifyToken, (req, res) => {
   const sql = "SELECT * FROM use";
   db.query(sql, (err, result) => {
@@ -120,94 +111,6 @@ app.get("/api/profile", verifyToken, (req, res) => {
     }
     res.send(result);
   });
-});
-
-app.post("/api/signout", (req, res) => {
-  res.clearCookie("token");
-  res.json({ message: "Signed out successfully" });
-});
-
-function verifyToken(req, res, next) {
-  // Get token from header, cookie, or query parameter
-  const token = req.headers.authorization;
-  //|| req.cookies.token || req.query.token;
-  if (!token) {
-    // If token is missing, return error
-    return res.status(401).json({ message: "Authorization token is missing" });
-  }
-
-  try {
-    // Verify and decode the token
-    const decoded = jwt.verify(token, "secret");
-
-    // Attach the decoded token to the request object
-    req.token = decoded;
-
-    // Call the next middleware
-    next();
-  } catch (err) {
-    // If token is invalid, return error
-    return res.status(401).json({ message: "Authorization token is invalid" });
-  }
-}
-
-app.post("/api/medicine/:user_id", verifyToken, (req, res) => {
-  const { name } = req.body;
-  const { user_id } = req.params;
-  db.query(
-    "INSERT INTO medicine (name ) VALUES (?) ON DUPLICATE KEY UPDATE name = name",
-    [name],
-    (error, results) => {
-      if (error) throw error;
-      res.json({ message: "medicine is added to medicine" });
-      const medicine_id = results.insertId;
-      insertMedicineUser(user_id, medicine_id);
-    }
-  );
-});
-function insertMedicineUser(user_id, medicine_id) {
-  db.query(
-    "INSERT INTO user_medicine (user_id, medicine_id) VALUES (?, ?)",
-    [user_id, medicine_id],
-    (error) => {
-      if (error) throw error;
-    }
-  );
-}
-
-app.post("/api/reminder/add", verifyToken, (req, res) => {
-
-  const {
-    user_id,
-    medicine,
-    dosage,
-    repetition,
-    frequency,
-    startDate,
-    endDate,
-    time,
-    note,
-  } = req.body;
-  db.query(
-    "INSERT INTO reminder (user_id, medicine, dosage, repetition, frequency, startDate, endDate, time, note) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-    [
-      user_id,
-      medicine,
-      dosage,
-      repetition,
-      frequency,
-      startDate,
-      endDate,
-      time,
-      note,
-    ],
-    (error,results) => {
-      if (error) throw error;
-      const id = results.insertId;
-
-      res.json({ message: "reminder is added",id });
-    }
-  );
 });
 
 app.put("/api/users/:id", verifyToken, (req, res) => {
@@ -233,72 +136,107 @@ app.put("/api/users/:id", verifyToken, (req, res) => {
   );
 });
 
-app.get("/api/notification/count/:userId", (req, res) => {
-  const { userId } = req.params;
+////// MEDICINE ENDPOINTS //////
 
-  // Execute a MySQL query to count the number of unread notifications for the user
-  db.query(
-    "SELECT COUNT(*) as count FROM notification WHERE user_id = ? AND isRead = FALSE",
-    [userId],
-    (error, results) => {
-      if (error) throw error;
-      const count = results[0].count;
-      res.json({ count });
+app.get("/api/medicine/:user_id", verifyToken, (req, res) => {
+  const { user_id } = req.params;
+
+  const sql =
+    "SELECT * FROM user_medicine JOIN medicine ON user_medicine.medicine_id = medicine.id WHERE user_medicine.user_id = ? ";
+
+  db.query(sql, [user_id], (err, result) => {
+    if (err) {
+      throw err;
     }
-  );
+    res.send(result);
+  });
 });
 
-app.get("/api/notification/:userId", (req, res) => {
-  const { userId } = req.params;
-
-  // Execute a MySQL query to count the number of unread notifications for the user
+function insertMedicineUser(user_id, medicine_id) {
   db.query(
-    "SELECT * FROM notification WHERE user_id = ? AND isRead = FALSE ORDER BY id DESC",
-    [userId],
-    (error, results) => {
-      if (error) throw error;
-      res.json(results);
-    }
-  );
-});
-
-app.get("/api/notification/all/:userId", (req, res) => {
-  const { userId } = req.params;
-
-  // Execute a MySQL query to count the number of unread notifications for the user
-  db.query(
-    "SELECT * FROM notification WHERE user_id = ? ORDER BY id DESC",
-    [userId],
-    (error, results) => {
-      if (error) throw error;
-      res.json(results);
-    }
-  );
-});
-
-app.put("/api/notification/read/:notificationId/", (req, res) => {
-  const { notificationId } = req.params;
-
-  // Execute a MySQL query to update the notification's isRead flag
-  db.query(
-    "UPDATE notification SET isRead = TRUE WHERE id = ?",
-    [notificationId],
+    "INSERT INTO user_medicine (user_id, medicine_id) VALUES (?, ?)",
+    [user_id, medicine_id],
     (error) => {
       if (error) throw error;
-      res.json({ message: "Notification updated" });
+    }
+  );
+}
+
+app.post("/api/medicine/:user_id", verifyToken, (req, res) => {
+  const { name } = req.body;
+  const { user_id } = req.params;
+  db.query(
+    "INSERT INTO medicine (name ) VALUES (?) ON DUPLICATE KEY UPDATE name = name",
+    [name],
+    (error, results) => {
+      if (error) throw error;
+      res.json({ message: "medicine is added to medicine" });
+      const medicine_id = results.insertId;
+      insertMedicineUser(user_id, medicine_id);
     }
   );
 });
 
-app.post("/api/notification/add", verifyToken, (req, res) => {
-  const { reminder_id, message, isRead, user_id } = req.body;
-  
+app.delete("/api/medicine/:id", verifyToken, (req, res) => {
+  const { id } = req.params;
+
+  db.query("DELETE FROM user_medicine WHERE medicine_id = ?", [id], (error) => {
+    if (error) throw error;
+    console.log("deleted medicine from user_medicine");
+  });
+
+  db.query("DELETE FROM medicine WHERE id = ?", [id], (error) => {
+    if (error) throw error;
+    res.json({ message: "medicine is deleted" });
+    console.log("deleted medicine");
+  });
+});
+
+////// REMINDER ENDPOINTS //////
+
+app.get("/api/reminder/:user_id", verifyToken, (req, res) => {
+  const { user_id } = req.params;
+
+  const sql = "SELECT * FROM reminder  WHERE user_id = ? ";
+
+  db.query(sql, [user_id], (err, result) => {
+    if (err) {
+      throw err;
+    }
+    res.send(result);
+  });
+});
+
+app.post("/api/reminder/add", verifyToken, (req, res) => {
+  const {
+    user_id,
+    medicine,
+    dosage,
+    repetition,
+    frequency,
+    startDate,
+    endDate,
+    time,
+    note,
+  } = req.body;
   db.query(
-    "INSERT INTO notification (reminder_id,message,isRead,user_id ) VALUES (?,?,?,?)",
-    [reminder_id, message, isRead, user_id],
-    (error) => {
+    "INSERT INTO reminder (user_id, medicine, dosage, repetition, frequency, startDate, endDate, time, note) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+    [
+      user_id,
+      medicine,
+      dosage,
+      repetition,
+      frequency,
+      startDate,
+      endDate,
+      time,
+      note,
+    ],
+    (error, results) => {
       if (error) throw error;
-      res.json({ message: "notification is added" });
+      const id = results.insertId;
+
+      res.json({ message: "reminder is added", id });
     }
   );
 });
@@ -313,68 +251,88 @@ app.delete("/api/reminder/:id", verifyToken, (req, res) => {
   });
 });
 
-app.delete("/api/notification/reminder/:reminder_id", verifyToken, (req, res) => {
-  const { reminder_id } = req.params;
+////// NOTIFICATION ENDPOINTS //////
+
+app.get("/api/notification/count/:userId", (req, res) => {
+  const { userId } = req.params;
 
   db.query(
-    "DELETE FROM notification WHERE reminder_id = ?",
-    [reminder_id],
-    (error) => {
+    "SELECT COUNT(*) as count FROM notification WHERE user_id = ? AND isRead = FALSE",
+    [userId],
+    (error, results) => {
       if (error) throw error;
-      res.json({ message: "notification is deleted" });
-      console.log("deleted notification");
+      const count = results[0].count;
+      res.json({ count });
     }
   );
 });
 
-// delete medicine
-app.delete("/api/medicine/:id", verifyToken, (req, res) => {
-  const { id } = req.params;
-
-  // delete medicine from user table before delete medicine from medicine table
-  db.query("DELETE FROM user_medicine WHERE medicine_id = ?", [id], (error) => {
-    if (error) throw error;
-    console.log("deleted medicine from user_medicine");
-  });
-
-  db.query("DELETE FROM medicine WHERE id = ?", [id], (error) => {
-    if (error) throw error;
-    res.json({ message: "medicine is deleted" });
-    console.log("deleted medicine");
-  });
-});
-
-app.put("/api/reminder/:id", verifyToken, (req, res) => {
-  const { id } = req.params;
-
-  const {
-    medicine,
-    dosage,
-    repetition,
-    frequency,
-    startDate,
-    endDate,
-    time,
-    note,
-  } = req.body;
+app.get("/api/notification/:userId", (req, res) => {
+  const { userId } = req.params;
 
   db.query(
-    "UPDATE reminder SET medicine = ?, dosage = ?, repetition = ?, frequency = ?, startDate = ?, endDate = ?, time = ?, note = ? WHERE id = ?",
-    [
-      medicine,
-      dosage,
-      repetition,
-      frequency,
-      startDate,
-      endDate,
-      time,
-      note,
-      id,
-    ],
-    (error) => {
+    "SELECT * FROM notification WHERE user_id = ? AND isRead = FALSE ORDER BY id DESC",
+    [userId],
+    (error, results) => {
       if (error) throw error;
-      res.json({ message: "reminder is updated" });
-      console.log("updated");
+      res.json(results);
     }
   );
 });
+
+app.get("/api/notification/all/:userId", (req, res) => {
+  const { userId } = req.params;
+
+  db.query(
+    "SELECT * FROM notification WHERE user_id = ? ORDER BY id DESC",
+    [userId],
+    (error, results) => {
+      if (error) throw error;
+      res.json(results);
+    }
+  );
+});
+
+app.put("/api/notification/read/:notificationId/", (req, res) => {
+  const { notificationId } = req.params;
+
+  db.query(
+    "UPDATE notification SET isRead = TRUE WHERE id = ?",
+    [notificationId],
+    (error) => {
+      if (error) throw error;
+      res.json({ message: "Notification updated" });
+    }
+  );
+});
+
+app.post("/api/notification/add", verifyToken, (req, res) => {
+  const { reminder_id, message, isRead, user_id } = req.body;
+
+  db.query(
+    "INSERT INTO notification (reminder_id,message,isRead,user_id ) VALUES (?,?,?,?)",
+    [reminder_id, message, isRead, user_id],
+    (error) => {
+      if (error) throw error;
+      res.json({ message: "notification is added" });
+    }
+  );
+});
+
+app.delete(
+  "/api/notification/reminder/:reminder_id",
+  verifyToken,
+  (req, res) => {
+    const { reminder_id } = req.params;
+
+    db.query(
+      "DELETE FROM notification WHERE reminder_id = ?",
+      [reminder_id],
+      (error) => {
+        if (error) throw error;
+        res.json({ message: "notification is deleted" });
+        console.log("deleted notification");
+      }
+    );
+  }
+);

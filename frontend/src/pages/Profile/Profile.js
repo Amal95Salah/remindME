@@ -40,7 +40,7 @@ function Profile() {
     const newEmail = dataForm.get("email");
     const password = dataForm.get("password");
     const data = { firstName, lastName, password, newEmail };
-    console.log(data);
+
     fetch(`/api/users/${id}`, {
       method: "PUT",
       headers: {

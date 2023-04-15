@@ -24,11 +24,11 @@ function MedicineForm() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
     const dataForm = new FormData(e.currentTarget);
-    console.log(dataForm);
     const name = dataForm.get("name");
     const data = { name };
-    console.log(data);
+
     fetch(`/api/medicine/${user_id}`, {
       method: "POST",
       headers: {

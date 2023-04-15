@@ -26,7 +26,6 @@ export default function ViewMadicine() {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
         setData((prevD) =>
           prevD.filter((medicine) => medicine.id !== id)
         );
@@ -45,7 +44,6 @@ export default function ViewMadicine() {
       .then((res) => res.json())
       .then((data) => {
         setData(data);
-        console.log(data);
       })
       .catch((err) => {
         console.log(err);

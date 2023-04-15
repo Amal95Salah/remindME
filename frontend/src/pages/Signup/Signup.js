@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import Box from "@mui/material/Box";
 import Link from "@mui/material/Link";
@@ -18,6 +19,8 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 const theme = createTheme();
 
 function Signup() {
+  const navigate = useNavigate();
+
   const [userError, setUserError] = useState();
 
   const handleSubmit = (e) => {
@@ -41,6 +44,9 @@ function Signup() {
         if (!response.ok) {
           setUserError(false);
         }
+        setTimeout(() => {
+          navigate("/login");
+        }, 2000);
         return response.json();
       })
       .then((data) => console.log(data))

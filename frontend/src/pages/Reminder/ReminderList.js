@@ -16,7 +16,7 @@ import TableContainer from "@mui/material/TableContainer";
 export default function ReminderList() {
   const [data, setData] = useState([]);
   const user_id = localStorage.getItem("id");
-  
+
   const HandleDelete = (reminderId) => {
     const token = localStorage.getItem("token");
 
@@ -58,7 +58,6 @@ export default function ReminderList() {
         setData((prevD) =>
           prevD.filter((reminder) => reminder.id !== reminderId)
         );
-        console.log(dataResponse.message);
       })
 
       .catch((error) => {
@@ -75,7 +74,6 @@ export default function ReminderList() {
       .then((res) => res.json())
       .then((data) => {
         setData(data);
-        console.log(data);
       })
       .catch((err) => {
         console.log(err);
