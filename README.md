@@ -1,10 +1,51 @@
 <h1> Medication Reminder App</h1>
-Generate a norufucations reminder to take a medication at specific times every day/week/month
+<h3> Generate notification reminders to take a medication at specific frequency every day/week/month based on user inputs
+ 
+This project is fullstack built with react for frontend, MUI for styling, node.js for backend and MYSQL for database.
 
+ <h2> Technologies </h2>
 
+| **Tech** | **Description** |
+|----------|-------|
+|  [React](https://facebook.github.io/react/)  |   Javascript framework   |
+|  [context]  |   Application state management for react    |
+|  [Node.js](https://nodejs.org/en)  |   Server framework for Node   |
+|  [MYSQL](https://www.mysql.com/)  |   SQL database    |
 
+ 
+ <h2> Database </h2>
+![remindMeDatabase](https://user-images.githubusercontent.com/38782963/232233697-5d6924f7-defd-4efb-a211-3519da4841b5.png)
 
-Features
+ <h2> API  </h2>
+ <h5> AUTHENTICATION </h5>
+ * POST /api/signup  :: user signup [first name, end name, email, password]
+ * POST /api/login   :: user login[email,password]
+ * POST /api/signout :: user logout
+ 
+ <h5> USER ENDPOINTS </h5>
+ * GET /api/user/:id  :: Fetch user information for profile
+ * PUT /api/users/:id :: update user information
+ 
+  <h5> MEDICINE ENDPOINTS </h5>
+ * GET /api/medicine/:user_id  :: Fetch all medecines for specefic user
+ * POST /api/medicine/:user_id :: Add medicine for specific user
+ * DELETE /api/medicine/:id    :: Delete medicine by its id
+ 
+ <h5> REMINDER ENDPOINTS </h5>
+ * GET /api/reminder/:user_id  :: Fetch all reminders for specefic user
+ * POST /api/reminder/add :: Add reminder for specific user
+ * DELETE /api/reminder/:id    :: Delete reminder by its id
+ 
+ <h5> REMINDER ENDPOINTS </h5>
+ * GET /api/notification/count/:userId         :: Count number of unread notification for specefic user
+ * GET  /api/notification/all/:userId          :: Get all notifications(read and unread) for specefic user
+ * GET /api/notification/:userId               :: Get unread notifications for specefic user
+ * PUT /api/notification/read/:notificationId/ :: Update notification satus to read
+ * POST /api/notification/add :: Add notification for specific user
+ * DELETE /api/notification/reminder/:reminder_id    :: Delete all notifications related to specefic reminder by  reminder id
+ 
+ 
+<h2> Features </h2>
 The app allows user to signup and login
 ![image](https://user-images.githubusercontent.com/38782963/232232225-2885e6da-fc19-4bce-a1cd-8cbfb9473f7f.png)
 
