@@ -1,20 +1,20 @@
 <h1> Medication Reminder App</h1>
-<h3> Generate notification reminders to take a medication at specific frequency every day/week/month based on user inputs
+<h4> Generate notification reminders to take a medication at specific frequency every day/week/month based on user inputs
  
-This project is fullstack built with react for frontend, MUI for styling, node.js for backend and MYSQL for database.
+This project is fullstack built with react for frontend, MUI for styling, node.js for backend and MYSQL for database. </h4>
 
  <h2> Technologies </h2>
 
 | **Tech** | **Description** |
 |----------|-------|
 |  [React](https://facebook.github.io/react/)  |   Javascript framework   |
-|  [context]  |   Application state management for react    |
+|  [context](https://legacy.reactjs.org/docs/context.html)  |   Application state management for react    |
 |  [Node.js](https://nodejs.org/en)  |   Server framework for Node   |
 |  [MYSQL](https://www.mysql.com/)  |   SQL database    |
 
  
  <h2> Database </h2>
-![remindMeDatabase](https://user-images.githubusercontent.com/38782963/232233697-5d6924f7-defd-4efb-a211-3519da4841b5.png)
+![image](https://user-images.githubusercontent.com/38782963/232234688-5b1d9982-d0af-41da-ad46-e35d53ab1e5e.png)
 
  <h2> API  </h2>
  <h5> AUTHENTICATION </h5>
