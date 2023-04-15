@@ -14,6 +14,7 @@ This project is fullstack built with react for frontend, MUI for styling, node.j
 
  
  <h2> Database </h2>
+ 
  ![image](https://user-images.githubusercontent.com/38782963/232235033-79a7853c-9eb9-4dfe-9660-f15d9d1d18ee.png)
 
  <h2> API  </h2>
