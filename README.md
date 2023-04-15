@@ -18,35 +18,41 @@ This project is fullstack built with react for frontend, MUI for styling, node.j
 
  <h2> API  </h2>
  <h5> AUTHENTICATION </h5>
- <<ul>
+ <ul>
   <li>  POST /api/signup  :: user signup [first name, end name, email, password]</li>
   <li>  POST /api/login   :: user login[email,password] </li>
   <li>  POST /api/signout :: user logout</li>
 </ul>
  
+  <h5> USER ENDPOINTS </h5>
  <ul>
   <li> GET /api/user/:id  :: Fetch user information for profile </li>
   <li> PUT /api/users/:id :: update user information</li>
 </ul>  
- <h5> USER ENDPOINTS </h5>
  
   <h5> MEDICINE ENDPOINTS </h5>
- * GET /api/medicine/:user_id  :: Fetch all medecines for specefic user
- * POST /api/medicine/:user_id :: Add medicine for specific user
- * DELETE /api/medicine/:id    :: Delete medicine by its id
+  <ul>
+  <li> GET /api/medicine/:user_id  :: Fetch all medecines for specefic user</li>
+  <li> POST /api/medicine/:user_id :: Add medicine for specific user</li>
+  <li> DELETE /api/medicine/:id    :: Delete medicine by its id</li>
+</ul>  
  
  <h5> REMINDER ENDPOINTS </h5>
- * GET /api/reminder/:user_id  :: Fetch all reminders for specefic user
- * POST /api/reminder/add :: Add reminder for specific user
- * DELETE /api/reminder/:id    :: Delete reminder by its id
+ <ul>
+  <li> GET /api/reminder/:user_id  :: Fetch all reminders for specefic user</li>
+  <li> POST /api/reminder/add :: Add reminder for specific user</li>
+  <li> DELETE /api/reminder/:id    :: Delete reminder by its id</li>
+</ul>  
  
  <h5> REMINDER ENDPOINTS </h5>
- * GET /api/notification/count/:userId         :: Count number of unread notification for specefic user
- * GET  /api/notification/all/:userId          :: Get all notifications(read and unread) for specefic user
- * GET /api/notification/:userId               :: Get unread notifications for specefic user
- * PUT /api/notification/read/:notificationId/ :: Update notification satus to read
- * POST /api/notification/add :: Add notification for specific user
- * DELETE /api/notification/reminder/:reminder_id    :: Delete all notifications related to specefic reminder by  reminder id
+ <ul>
+  <li> GET /api/notification/count/:userId         :: Count number of unread notification for specefic user</li>
+  <li> GET  /api/notification/all/:userId          :: Get all notifications(read and unread) for specefic user</li>
+  <li> GET /api/notification/:userId               :: Get unread notifications for specefic user</li>
+  <li> PUT /api/notification/read/:notificationId/ :: Update notification satus to read</li>
+  <li> POST /api/notification/add :: Add notification for specific user</li>
+  <li> DELETE /api/notification/reminder/:reminder_id    :: Delete all notifications related to specefic reminder by  reminder id</li>
+</ul>  
  
  
 <h2> Features </h2>
