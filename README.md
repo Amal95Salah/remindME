@@ -14,17 +14,21 @@ This project is fullstack built with react for frontend, MUI for styling, node.j
 
  
  <h2> Database </h2>
-![image](https://user-images.githubusercontent.com/38782963/232234688-5b1d9982-d0af-41da-ad46-e35d53ab1e5e.png)
+![image](https://user-images.githubusercontent.com/38782963/232234762-8c9cf6fd-8b5d-4488-acec-deffa97adec4.png)
 
  <h2> API  </h2>
  <h5> AUTHENTICATION </h5>
- * POST /api/signup  :: user signup [first name, end name, email, password]
- * POST /api/login   :: user login[email,password]
- * POST /api/signout :: user logout
+ <<ul>
+  <li>  POST /api/signup  :: user signup [first name, end name, email, password]</li>
+  <li>  POST /api/login   :: user login[email,password] </li>
+  <li>  POST /api/signout :: user logout</li>
+</ul>
  
+ <ul>
+  <li> GET /api/user/:id  :: Fetch user information for profile </li>
+  <li> PUT /api/users/:id :: update user information</li>
+</ul>  
  <h5> USER ENDPOINTS </h5>
- * GET /api/user/:id  :: Fetch user information for profile
- * PUT /api/users/:id :: update user information
  
   <h5> MEDICINE ENDPOINTS </h5>
  * GET /api/medicine/:user_id  :: Fetch all medecines for specefic user
