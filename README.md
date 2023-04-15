@@ -1,4 +1,4 @@
-Medication Reminder App
+<h1> Medication Reminder App</h1>
 Generate a norufucations reminder to take a medication at specific times every day/week/month
 
 
