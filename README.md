@@ -58,6 +58,7 @@ This project is fullstack built with react for frontend, MUI for styling, node.j
  
 <h2> Features </h2>
 The app allows user to signup and login
+
 ![image](https://user-images.githubusercontent.com/38782963/232232225-2885e6da-fc19-4bce-a1cd-8cbfb9473f7f.png)
 
 ![image](https://user-images.githubusercontent.com/38782963/232232276-10edf3bc-b959-4fa5-b7fa-1c7116bef53e.png)
