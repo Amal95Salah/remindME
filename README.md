@@ -14,7 +14,7 @@ This project is fullstack built with react for frontend, MUI for styling, node.j
 
  
  <h2> Database </h2>
-![image](https://user-images.githubusercontent.com/38782963/232234762-8c9cf6fd-8b5d-4488-acec-deffa97adec4.png)
+ ![image](https://user-images.githubusercontent.com/38782963/232235033-79a7853c-9eb9-4dfe-9660-f15d9d1d18ee.png)
 
  <h2> API  </h2>
  <h5> AUTHENTICATION </h5>
@@ -80,10 +80,12 @@ In home, user can show all his notificatoin with the status (read and unread not
 ![image](https://user-images.githubusercontent.com/38782963/232233154-cb067f7a-5aa2-4a3c-8d40-d18e9d94d6f6.png)
 
 In home, user can go to his profile and edit 
+
 ![image](https://user-images.githubusercontent.com/38782963/232233196-c17fabcd-7c3b-4196-b642-9ed846313ee0.png)
 
 In home user can logout.
 In the navbar user can go to his profile and logout.
+
 ![image](https://user-images.githubusercontent.com/38782963/232233243-c6f08b84-8a7c-4273-9afb-56aa04e9254c.png)
 
 
